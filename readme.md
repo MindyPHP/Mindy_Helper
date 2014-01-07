@@ -1,2 +1,5 @@
 [![Build Status](https://travis-ci.org/studio107/Mindy_Helper.png?branch=master)](https://travis-ci.org/studio107/Mindy_Helper)
 [![Coverage Status](https://coveralls.io/repos/studio107/Mindy_Helper/badge.png)](https://coveralls.io/r/studio107/Mindy_Helper)
+[![Latest Stable Version](https://poser.pugx.org/mindy/helper/v/stable.png)](https://packagist.org/packages/mindy/helper)
+[![Latest Unstable Version](https://poser.pugx.org/mindy/helper/v/unstable.png)](https://packagist.org/packages/mindy/helper)
+[![Total Downloads](https://poser.pugx.org/mindy/helper/downloads.png)](https://packagist.org/packages/mindy/helper)
