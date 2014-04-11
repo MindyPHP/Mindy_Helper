@@ -1,11 +1,10 @@
 <?php
 
-use Mindy\Helper\Dumper;
 use Mindy\Helper\Params;
 
 /**
  * All rights reserved.
- * 
+ *
  * @author Falaleev Maxim
  * @email max@studio107.ru
  * @version 1.0
@@ -13,8 +12,6 @@ use Mindy\Helper\Params;
  * @site http://studio107.ru
  * @date 07/01/14.01.2014 13:50
  */
-
-
 class ParamsTest extends TestCase
 {
     public function testParams()
@@ -27,9 +24,9 @@ class ParamsTest extends TestCase
                 'b' => 1
             ]
         ]);
-        $this->assertEquals(1, Params::param('a.b'));
-        $this->assertEquals(1, Params::param('a.c', 1));
-        $this->assertEquals(1, Params::param('a.b.c', 1));
-        $this->assertEquals(null, Params::param('abc'));
+        $this->assertEquals(1, Params::get('a.b'));
+        $this->assertEquals(1, Params::get('a.c', 1));
+        $this->assertEquals(1, Params::get('a.b.c', 1));
+        $this->assertEquals(null, Params::get('abc'));
     }
 }

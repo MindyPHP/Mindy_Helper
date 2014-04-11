@@ -54,7 +54,7 @@ class Params
      *
      * @return mixed
      */
-    public static function param($key, $defaultValue = null)
+    public static function get($key, $defaultValue = null)
     {
         return self::getKeyFromAlias($key, self::$params, $defaultValue);
     }
