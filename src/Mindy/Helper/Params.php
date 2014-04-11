@@ -19,6 +19,16 @@ class Params
 {
     public static $params = [];
 
+    public static function setParams(array $params = [])
+    {
+        self::$params = $params;
+    }
+
+    public static function getParams()
+    {
+        return self::$params;
+    }
+
     public static function collect($path)
     {
         $files = glob($path . '/*/config/params.php');
@@ -74,6 +84,9 @@ class Params
         unset($keys[0]);
 
         foreach ($keys as $k) {
+            if(!is_array($value)) {
+                return $defaultValue;
+            }
             if (!isset($value[$k]) && !array_key_exists($k, $value)) {
                 return $defaultValue;
             }
