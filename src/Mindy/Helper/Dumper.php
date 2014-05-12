@@ -32,15 +32,10 @@ class Dumper
      */
     public static function dump($var, $depth = 10, $highlight = true)
     {
-        if (self::isCli()) {
+        if (Console::isCli()) {
             $highlight = false;
         }
         echo static::dumpAsString($var, $depth, $highlight);
-    }
-
-    public static function isCli()
-    {
-        return php_sapi_name() === 'cli';
     }
 
     /**
