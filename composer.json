@@ -11,6 +11,7 @@
         "php": ">=5.4"
     },
     "require-dev": {
+        "mindy/core": "dev-master",
         "satooshi/php-coveralls": "dev-master"
     },
     "authors": [
