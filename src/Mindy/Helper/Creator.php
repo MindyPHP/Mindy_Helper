@@ -53,8 +53,8 @@ class Creator
      * Below are some usage examples:
      *
      * ~~~
-     * $object = \Yii::createObject('app\components\GoogleMap');
-     * $object = \Yii::createObject([
+     * $object = \Mindy::createObject('app\components\GoogleMap');
+     * $object = \Mindy::createObject([
      *     'class' => 'app\components\GoogleMap',
      *     'apiKey' => 'xyz',
      * ]);
@@ -108,10 +108,11 @@ class Creator
             if (!empty($config)) {
                 $args[] = $config;
             }
-            return $reflection->newInstanceArgs($args);
+            $obj = $reflection->newInstanceArgs($args);
         } else {
-            return empty($config) ? new $class : new $class($config);
+            $obj = empty($config) ? new $class : new $class($config);
         }
+        return self::configure($obj, $config);
     }
 
     /**
