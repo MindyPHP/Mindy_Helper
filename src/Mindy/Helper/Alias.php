@@ -15,6 +15,8 @@
 namespace Mindy\Helper;
 
 
+use InvalidArgumentException;
+
 class Alias
 {
     private static $_aliases = [];
@@ -24,10 +26,14 @@ class Alias
      * Note, this method does not ensure the existence of the resulting file path.
      * It only checks if the root alias is valid or not.
      * @param string $alias alias (e.g. system.web.CController)
+     * @throws \InvalidArgumentException
      * @return mixed file path corresponding to the alias, false if the alias is invalid.
      */
     public static function get($alias)
     {
+        if(!is_string($alias)) {
+            throw new InvalidArgumentException("Alias must be a string. " . gettype($alias) . " given.");
+        }
         if (isset(self::$_aliases[$alias])) {
             return self::$_aliases[$alias];
         } elseif (($pos = strpos($alias, '.')) !== false) {

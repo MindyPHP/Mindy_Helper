@@ -17,29 +17,48 @@ namespace Mindy\Helper;
 
 class Params 
 {
+    /**
+     * @var array
+     */
     public static $params = [];
 
+    /**
+     * @param array $params
+     */
     public static function setParams(array $params = [])
     {
         self::$params = $params;
     }
 
+    /**
+     * @return array
+     */
     public static function getParams()
     {
         return self::$params;
     }
 
-    public static function collect($path)
+    /**
+     * @param $path
+     * @return array
+     */
+    public static function collect($paths)
     {
-        $files = glob($path . '/*/config/params.php');
-        $params = array();
-        if (is_array($files)) {
-            foreach ($files as $file) {
-                $tmp = include $file;
-                if (is_array($tmp) && !empty($tmp)) {
-                    $module = str_replace($path . '/', '', $file);
-                    $module = str_replace('/config/params.php', '', $module);
-                    $params[$module] = $tmp;
+        $params = [];
+        foreach($paths as $path) {
+            if(!is_dir($path)) {
+                continue;
+            }
+
+            $files = glob($path . '/*/config/params.php');
+            if (is_array($files)) {
+                foreach ($files as $file) {
+                    $tmp = include_once($file);
+                    if (is_array($tmp) && !empty($tmp)) {
+                        $module = str_replace($path . '/', '', $file);
+                        $module = str_replace('/config/params.php', '', $module);
+                        $params[$module] = $tmp;
+                    }
                 }
             }
         }
