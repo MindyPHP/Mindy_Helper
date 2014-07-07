@@ -21,6 +21,11 @@ class Alias
 {
     private static $_aliases = [];
 
+    public static function all()
+    {
+        return self::$_aliases;
+    }
+
     /**
      * Translates an alias into a file path.
      * Note, this method does not ensure the existence of the resulting file path.
@@ -37,9 +42,16 @@ class Alias
         if (isset(self::$_aliases[$alias])) {
             return self::$_aliases[$alias];
         } elseif (($pos = strpos($alias, '.')) !== false) {
-            $rootAlias = substr($alias, 0, $pos);
-            if (isset(self::$_aliases[$rootAlias])) {
-                return self::$_aliases[$alias] = rtrim(self::$_aliases[$rootAlias] . DIRECTORY_SEPARATOR . str_replace('.', DIRECTORY_SEPARATOR, substr($alias, $pos + 1)), '*' . DIRECTORY_SEPARATOR);
+
+            $tmp = explode('.', $alias);
+            $parentAlias = str_replace("." . end($tmp), "", $alias);
+            if (isset(self::$_aliases[$parentAlias])) {
+                return self::$_aliases[$alias] = rtrim(self::$_aliases[$parentAlias] . DIRECTORY_SEPARATOR . str_replace('.', DIRECTORY_SEPARATOR, substr($alias, $pos + 1)), '*' . DIRECTORY_SEPARATOR);
+            } else {
+                $rootAlias = substr($alias, 0, $pos);
+                if (isset(self::$_aliases[$rootAlias])) {
+                    return self::$_aliases[$alias] = rtrim(self::$_aliases[$rootAlias] . DIRECTORY_SEPARATOR . str_replace('.', DIRECTORY_SEPARATOR, substr($alias, $pos + 1)), '*' . DIRECTORY_SEPARATOR);
+                }
             }
 //            elseif (self::$_app instanceof CWebApplication) {
 //                if (self::$_app->findModule($rootAlias) !== null)
