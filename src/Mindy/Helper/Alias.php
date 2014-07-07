@@ -61,6 +61,24 @@ class Alias
         return false;
     }
 
+    public static function find($alias)
+    {
+        if(!is_string($alias)) {
+            throw new InvalidArgumentException("Alias must be a string. " . gettype($alias) . " given.");
+        }
+        $found = [];
+        $parentAlias = str_replace('.*', '', $alias);
+        foreach(self::$_aliases as $aliasPath => $path){
+            if (Text::startsWith($aliasPath, $parentAlias)) {
+                $cleanAlias = substr_replace($aliasPath, '', 0, strlen($parentAlias)+1);
+                if (strlen($cleanAlias) > 0 && strpos($cleanAlias, '.') === false) {
+                    $found[] = $path;
+                }
+            }
+        }
+        return $found;
+    }
+
     /**
      * Create a path alias.
      * Note, this method neither checks the existence of the path nor normalizes the path.
