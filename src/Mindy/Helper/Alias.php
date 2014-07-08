@@ -39,12 +39,14 @@ class Alias
         if(!is_string($alias)) {
             throw new InvalidArgumentException("Alias must be a string. " . gettype($alias) . " given.");
         }
+
         if (isset(self::$_aliases[$alias])) {
             return self::$_aliases[$alias];
         } elseif (($pos = strpos($alias, '.')) !== false) {
 
             $tmp = explode('.', $alias);
             $parentAlias = str_replace("." . end($tmp), "", $alias);
+
             if (isset(self::$_aliases[$parentAlias])) {
                 return self::$_aliases[$alias] = rtrim(self::$_aliases[$parentAlias] . DIRECTORY_SEPARATOR . str_replace('.', DIRECTORY_SEPARATOR, substr($alias, $pos + 1)), '*' . DIRECTORY_SEPARATOR);
             } else {
