@@ -8,10 +8,10 @@
         }
     },
     "require": {
-        "php": ">=5.4"
+        "php": ">=5.4",
+        "mindy/exception": "dev-master"
     },
     "require-dev": {
-        "mindy/core": "dev-master",
         "satooshi/php-coveralls": "dev-master"
     },
     "authors": [

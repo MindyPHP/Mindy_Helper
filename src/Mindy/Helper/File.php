@@ -31,7 +31,7 @@ use Mindy\Exception\Exception;
  * @package system.utils
  * @since 1.0
  */
-class FileHelper
+class File
 {
     /**
      * Returns the extension name of a file path.
