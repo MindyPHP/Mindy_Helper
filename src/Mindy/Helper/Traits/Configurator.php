@@ -53,10 +53,15 @@ trait Configurator
      */
     public function __construct($config = [])
     {
+        $this->configure($config);
+        $this->init();
+    }
+
+    protected function configure($config = [])
+    {
         if (!empty($config)) {
             Creator::configure($this, $config);
         }
-        $this->init();
     }
 
     /**
