@@ -33,6 +33,11 @@ trait Accessors
      */
     public function __get($name)
     {
+        return $this->__getinternal($name);
+    }
+
+    public function __getInternal($name)
+    {
         $getter = 'get' . $name;
         if (method_exists($this, $getter)) {
             return $this->$getter();
@@ -56,6 +61,11 @@ trait Accessors
      */
     public function __set($name, $value)
     {
+        $this->__setInternal($name, $value);
+    }
+
+    public function __setInternal($name, $value)
+    {
         $setter = 'set' . $name;
         if (method_exists($this, $setter)) {
             $this->$setter($value);
@@ -78,6 +88,11 @@ trait Accessors
      */
     public function __isset($name)
     {
+        $this->__issetInternal($name);
+    }
+
+    public function __issetInternal($name)
+    {
         $getter = 'get' . $name;
         if (method_exists($this, $getter)) {
             return $this->$getter() !== null;
@@ -99,6 +114,11 @@ trait Accessors
      */
     public function __unset($name)
     {
+        $this->__unsetInternal($name);
+    }
+
+    public function __unsetInternal($name)
+    {
         $setter = 'set' . $name;
         if (method_exists($this, $setter)) {
             $this->$setter(null);
@@ -118,6 +138,11 @@ trait Accessors
      * @return mixed the method return value
      */
     public function __call($name, $params)
+    {
+        $this->__callInternal($name, $params);
+    }
+
+    public function __callInternal($name, $params)
     {
         throw new UnknownMethodException('Unknown method: ' . get_class($this) . "::$name()");
     }
