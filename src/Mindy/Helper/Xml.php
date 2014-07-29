@@ -38,7 +38,7 @@ class Xml
 
     /**
      * Convert an Array to XML
-     * @param $xml
+     * @param $xml DOMDocument
      * @param string $rootNode - name of the root node to be converted
      * @param array $data - array to be converted
      * @throws \Mindy\Base\Exception\Exception
@@ -79,13 +79,7 @@ class Xml
         if (is_array($data)) {
             // recurse to get the node for that key
             foreach ($data as $key => $value) {
-
-                /*
-                 * Check if the tag name or attribute name contains illegal characters
-                 * Ref: http://www.w3.org/TR/xml/#sec-common-syn
-                 */
-                preg_match('/^[a-z_]+[a-z0-9\:\-\.\_]*[^:]*$/i', $key, $matches);
-                if ($matches[0] != $key) {
+                if (!self::isValidTagName($key)) {
                     throw new Exception('[Array2XML] Illegal character in tag name. tag: ' . $key . ' in node: ' . $rootNode);
                 }
 
@@ -120,12 +114,22 @@ class Xml
      */
     private static function bool2str($v)
     {
-        if($v === true) {
+        if ($v === true) {
             return 'true';
         } else if ($v === false) {
             return 'false';
         }
 
         return $v;
+    }
+
+    /**
+     * Check if the tag name or attribute name contains illegal characters
+     * Ref: http://www.w3.org/TR/xml/#sec-common-syn
+     */
+    private static function isValidTagName($key)
+    {
+        preg_match('/^[a-z_]+[a-z0-9\:\-\.\_]*[^:]*$/i', $key, $matches);
+        return $matches[0] != $key;
     }
 }
