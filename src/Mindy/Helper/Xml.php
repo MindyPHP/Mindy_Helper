@@ -1,7 +1,5 @@
 <?php
 /**
- *
- *
  * All rights reserved.
  *
  * @author Falaleev Maxim
@@ -79,18 +77,22 @@ class Xml
         if (is_array($data)) {
             // recurse to get the node for that key
             foreach ($data as $key => $value) {
-                if (!self::isValidTagName($key)) {
-                    throw new Exception('[Array2XML] Illegal character in tag name. tag: ' . $key . ' in node: ' . $rootNode);
-                }
-
-                if (is_array($value) && is_numeric(key($value))) {
+                if (is_array($value) && is_numeric($key)) {
                     // MORE THAN ONE NODE OF ITS KIND;
                     // if the new array is numeric index, means it is array of nodes of the same kind
                     // it should follow the parent key name
                     foreach ($value as $k => $v) {
-                        $node->appendChild(self::convert($xml, $key, $v));
+                        if (!self::isValidTagName($k)) {
+                            throw new Exception('[Array2XML] Illegal character in tag name. tag: ' . $k . ' in node: ' . $rootNode);
+                        }
+
+                        $node->appendChild(self::convert($xml, $k, $v));
                     }
                 } else {
+                    if (!self::isValidTagName($key)) {
+                        throw new Exception('[Array2XML] Illegal character in tag name. tag: ' . $key . ' in node: ' . $rootNode);
+                    }
+
                     // ONLY ONE NODE OF ITS KIND
                     $node->appendChild(self::convert($xml, $key, $value));
                 }
@@ -130,6 +132,6 @@ class Xml
     private static function isValidTagName($key)
     {
         preg_match('/^[a-z_]+[a-z0-9\:\-\.\_]*[^:]*$/i', $key, $matches);
-        return $matches[0] != $key;
+        return isset($matches[0]) && $matches[0] == $key;
     }
 }
