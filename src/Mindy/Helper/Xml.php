@@ -14,7 +14,7 @@ namespace Mindy\Helper;
 
 
 use DOMDocument;
-use Mindy\Base\Exception\Exception;
+use Exception;
 
 class Xml
 {
@@ -39,7 +39,7 @@ class Xml
      * @param $xml DOMDocument
      * @param string $rootNode - name of the root node to be converted
      * @param array $data - array to be converted
-     * @throws \Mindy\Base\Exception\Exception
+     * @throws Exception
      * @return \DOMNode
      */
     private static function convert($xml, $rootNode, $data)
@@ -77,26 +77,33 @@ class Xml
         if (is_array($data)) {
             // recurse to get the node for that key
             foreach ($data as $key => $value) {
-                if (is_array($value) && is_numeric($key)) {
-                    // MORE THAN ONE NODE OF ITS KIND;
-                    // if the new array is numeric index, means it is array of nodes of the same kind
-                    // it should follow the parent key name
-                    foreach ($value as $k => $v) {
-                        if (!self::isValidTagName($k)) {
-                            throw new Exception('[Array2XML] Illegal character in tag name. tag: ' . $k . ' in node: ' . $rootNode);
-                        }
-
-                        $node->appendChild(self::convert($xml, $k, $v));
+                if(strpos($key, '@') === 0 && is_array($value)) {
+                    $newKey = str_replace('@', '', $key);
+                    foreach($value as $v) {
+                        $node->appendChild(self::convert($xml, $newKey, $v));
                     }
                 } else {
-                    if (!self::isValidTagName($key)) {
-                        throw new Exception('[Array2XML] Illegal character in tag name. tag: ' . $key . ' in node: ' . $rootNode);
-                    }
+                    if (is_array($value) && is_numeric($key)) {
+                        // MORE THAN ONE NODE OF ITS KIND;
+                        // if the new array is numeric index, means it is array of nodes of the same kind
+                        // it should follow the parent key name
+                        foreach ($value as $k => $v) {
+                            if (!self::isValidTagName($k)) {
+                                throw new Exception('[Array2XML] Illegal character in tag name. tag: ' . $k . ' in node: ' . $rootNode);
+                            }
 
-                    // ONLY ONE NODE OF ITS KIND
-                    $node->appendChild(self::convert($xml, $key, $value));
+                            $node->appendChild(self::convert($xml, $k, $v));
+                        }
+                    } else {
+                        if (!self::isValidTagName($key)) {
+                            throw new Exception('[Array2XML] Illegal character in tag name. tag: ' . $key . ' in node: ' . $rootNode);
+                        }
+
+                        // ONLY ONE NODE OF ITS KIND
+                        $node->appendChild(self::convert($xml, $key, $value));
+                    }
+                    unset($data[$key]); //remove the key from the array once done.
                 }
-                unset($data[$key]); //remove the key from the array once done.
             }
         }
 
