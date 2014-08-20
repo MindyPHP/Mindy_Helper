@@ -27,10 +27,11 @@ class Xml
      * @internal param string $node_name - name of the root node to be converted
      * @return string
      */
-    public static function encode($rootNode = 'response', array $arr = [], $version = '1.0', $encoding = 'UTF-8')
+    public static function encode($rootNode = 'response', array $arr = [], $formatOutput = false, $version = '1.0', $encoding = 'UTF-8')
     {
         $xml = new DomDocument($version, $encoding);
         $xml->appendChild(self::convert($xml, $rootNode, $arr));
+        $xml->formatOutput = $formatOutput;
         return $xml->saveXML();
     }
 
