@@ -41,4 +41,17 @@ class Arr
         unset($tmp);
         return $result;
     }
+
+    public static function cleanArrays(array $data)
+    {
+        $new = [];
+        foreach ($data as $item) {
+            $tmp = array_filter($item);
+            if (empty($tmp)) {
+                continue;
+            }
+            $new[] = $tmp;
+        }
+        return $new;
+    }
 }
