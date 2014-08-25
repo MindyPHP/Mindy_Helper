@@ -45,12 +45,12 @@ class Arr
     public static function cleanArrays(array $data)
     {
         $new = [];
-        foreach ($data as $item) {
+        foreach ($data as $key => $item) {
             $tmp = array_filter($item);
             if (empty($tmp)) {
                 continue;
             }
-            $new[] = $tmp;
+            $new[$key] = $tmp;
         }
         return $new;
     }

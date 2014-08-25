@@ -33,6 +33,52 @@ use Mindy\Exception\Exception;
  */
 class File
 {
+    public static function fixMultiFile(array $files = [], $removeEmpty = true)
+    {
+        if ($files == null) {
+            $files = is_array($_FILES) ? $_FILES : array();
+        }
+
+        //make there there is a file, and see if the first item is also an array
+        $newFiles = array();
+        foreach ($files as $name => $attributes) {
+            if (is_array(reset($attributes))) { //check first item
+                foreach ($attributes as $attribute => $item) { //array file submit, eg name="model[file]"
+                    foreach ($item as $key => $value) {
+                        if (is_array($value)) {
+                            foreach ($value as $key2 => $sub) { // multi-array file submit, eg name="model[file][]"
+                                $newFiles[$name][$key][$key2][$attribute] = $sub;
+                            }
+                        } else {
+                            $newFiles[$name][$key][$attribute] = $value;
+                        }
+                    }
+                }
+            } else { // regular file submit, eg name="file"
+                $newFiles[$name] = $attributes;
+            }
+        }
+
+        return $removeEmpty ? self::removeEmptyFiles($newFiles) : $newFiles;
+    }
+
+    private static function removeEmptyFiles(array $files, $r = [], $level = 1)
+    {
+        foreach ($files as $key => $value) {
+            if (is_array($value)) {
+                $item = $value[key($value)];
+                if (isset($item['error']) && $item['error'] == UPLOAD_ERR_NO_FILE) {
+                    continue;
+                }
+
+                $level++;
+                $value = self::removeEmptyFiles($value, $r, $level);
+            }
+            $r[$key] = $value;
+        }
+        return $r;
+    }
+
     /**
      * Original code: https://gist.github.com/lorenzos/1711e81a9162320fde20
      * Article: http://stackoverflow.com/questions/15025875/what-is-the-best-way-in-php-to-read-last-lines-from-a-file
