@@ -46,7 +46,7 @@ class Arr
     {
         $new = [];
         foreach ($data as $key => $item) {
-            $tmp = array_filter($item);
+            $tmp = is_array($item) ? array_filter($item) : $item;
             if (empty($tmp)) {
                 continue;
             }

@@ -108,7 +108,6 @@ class Creator
             if (!empty($config)) {
                 $args[] = $config;
             }
-
             $obj = $reflection->newInstanceArgs($args);
         } else {
             $obj = empty($config) ? new $class : new $class($config);
