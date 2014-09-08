@@ -16,7 +16,6 @@ namespace Mindy\Helper\Traits;
 
 use Closure;
 use Mindy\Base\BaseList;
-use Mindy\Base\Event;
 use Mindy\Base\Exception\Exception;
 use Mindy\Base\Interfaces\IBehavior;
 use Mindy\Base\Mindy;
@@ -24,7 +23,6 @@ use Mindy\Helper\Creator;
 
 trait BehaviorAccessors
 {
-    private $_e;
     private $_m;
 
     /**
@@ -50,13 +48,6 @@ trait BehaviorAccessors
         $getter = 'get' . $name;
         if (method_exists($this, $getter)) {
             return $this->$getter();
-        } elseif (strncasecmp($name, 'on', 2) === 0 && method_exists($this, $name)) {
-            // duplicating getEventHandlers() here for performance
-            $name = strtolower($name);
-            if (!isset($this->_e[$name])) {
-                $this->_e[$name] = new BaseList;
-            }
-            return $this->_e[$name];
         } elseif (isset($this->_m[$name])) {
             return $this->_m[$name];
         } elseif (is_array($this->_m)) {
@@ -111,15 +102,25 @@ trait BehaviorAccessors
             }
         }
         if (method_exists($this, 'get' . $name)) {
-            throw new Exception(Mindy::t('yii', 'Property "{class}.{property}" is read only.', [
+//            $msg = Mindy::t('yii', 'Property "{class}.{property}" is read only.', [
+//                '{class}' => get_class($this),
+//                '{property}' => $name
+//            ]);
+            $msg = strtr('Property "{class}.{property}" is read only.', [
                 '{class}' => get_class($this),
                 '{property}' => $name
-            ]));
+            ]);
+            throw new Exception($msg);
         } else {
-            throw new Exception(Mindy::t('yii', 'Property "{class}.{property}" is not defined.', [
+//            $msg = Mindy::t('yii', 'Property "{class}.{property}" is not defined.', [
+//                '{class}' => get_class($this),
+//                '{property}' => $name
+//            ]);
+            $msg = strtr('Property "{class}.{property}" is not defined.', [
                 '{class}' => get_class($this),
                 '{property}' => $name
-            ]));
+            ]);
+            throw new Exception($msg);
         }
     }
 
@@ -222,8 +223,11 @@ trait BehaviorAccessors
         if (class_exists('Closure', false) && ($this->canGetProperty($name) || property_exists($this, $name)) && $this->$name instanceof Closure) {
             return call_user_func_array($this->$name, $parameters);
         }
-        throw new Exception(Mindy::t('yii', '{class} and its behaviors do not have a method or closure named "{name}".',
-            ['{class}' => get_class($this), '{name}' => $name]));
+//        $msg = Mindy::t('yii', '{class} and its behaviors do not have a method or closure named "{name}".',
+//            ['{class}' => get_class($this), '{name}' => $name]);
+        $msg = strtr('{class} and its behaviors do not have a method or closure named "{name}".',
+            ['{class}' => get_class($this), '{name}' => $name]);
+        throw new Exception($msg);
     }
 
     /**
@@ -396,153 +400,6 @@ trait BehaviorAccessors
     public function canSetProperty($name)
     {
         return method_exists($this, 'set' . $name);
-    }
-
-
-    //////////////////////////
-    /// Events
-    //////////////////////////
-
-    /**
-     * Determines whether an event is defined.
-     * An event is defined if the class has a method named like 'onXXX'.
-     * Note, event name is case-insensitive.
-     * @param string $name the event name
-     * @return boolean whether an event is defined
-     */
-    public function hasEvent($name)
-    {
-        return !strncasecmp($name, 'on', 2) && method_exists($this, $name);
-    }
-
-    /**
-     * Checks whether the named event has attached handlers.
-     * @param string $name the event name
-     * @return boolean whether an event has been attached one or several handlers
-     */
-    public function hasEventHandler($name)
-    {
-        $name = strtolower($name);
-        return isset($this->_e[$name]) && $this->_e[$name]->getCount() > 0;
-    }
-
-    /**
-     * Returns the list of attached event handlers for an event.
-     * @param string $name the event name
-     * @return CList list of attached event handlers for the event
-     * @throws Exception if the event is not defined
-     */
-    public function getEventHandlers($name)
-    {
-        if ($this->hasEvent($name)) {
-            $name = strtolower($name);
-            if (!isset($this->_e[$name])) {
-                $this->_e[$name] = new BaseList;
-            }
-            return $this->_e[$name];
-        } else {
-            throw new Exception(Mindy::t('yii', 'Event "{class}.{event}" is not defined.',
-                ['{class}' => get_class($this), '{event}' => $name]));
-        }
-    }
-
-    /**
-     * Attaches an event handler to an event.
-     *
-     * An event handler must be a valid PHP callback, i.e., a string referring to
-     * a global function name, or an array containing two elements with
-     * the first element being an object and the second element a method name
-     * of the object.
-     *
-     * An event handler must be defined with the following signature,
-     * <pre>
-     * function handlerName($event) {}
-     * </pre>
-     * where $event includes parameters associated with the event.
-     *
-     * This is a convenient method of attaching a handler to an event.
-     * It is equivalent to the following code:
-     * <pre>
-     * $component->getEventHandlers($eventName)->add($eventHandler);
-     * </pre>
-     *
-     * Using {@link getEventHandlers}, one can also specify the execution order
-     * of multiple handlers attaching to the same event. For example:
-     * <pre>
-     * $component->getEventHandlers($eventName)->insertAt(0,$eventHandler);
-     * </pre>
-     * makes the handler to be invoked first.
-     *
-     * @param string $name the event name
-     * @param callback $handler the event handler
-     * @throws Exception if the event is not defined
-     * @see detachEventHandler
-     */
-    public function attachEventHandler($name, $handler)
-    {
-        $this->getEventHandlers($name)->add($handler);
-    }
-
-    /**
-     * Detaches an existing event handler.
-     * This method is the opposite of {@link attachEventHandler}.
-     * @param string $name event name
-     * @param callback $handler the event handler to be removed
-     * @return boolean if the detachment process is successful
-     * @see attachEventHandler
-     */
-    public function detachEventHandler($name, $handler)
-    {
-        if ($this->hasEventHandler($name)) {
-            return $this->getEventHandlers($name)->remove($handler) !== false;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Raises an event.
-     * This method represents the happening of an event. It invokes
-     * all attached handlers for the event.
-     * @param string $name the event name
-     * @param Event $event the event parameter
-     * @throws Exception if the event is undefined or an event handler is invalid.
-     */
-    public function raiseEvent($name, $event)
-    {
-        $name = strtolower($name);
-        if (isset($this->_e[$name])) {
-            foreach ($this->_e[$name] as $handler) {
-                if (is_string($handler)) {
-                    call_user_func($handler, $event);
-                } elseif (is_callable($handler, true)) {
-                    if (is_array($handler)) {
-                        // an array: 0 - object, 1 - method name
-                        list($object, $method) = $handler;
-                        if (is_string($object)) { // static method call
-                            call_user_func($handler, $event);
-                        } elseif (method_exists($object, $method)) {
-                            $object->$method($event);
-                        } else {
-                            throw new Exception(Mindy::t('yii', 'Event "{class}.{event}" is attached with an invalid handler "{handler}".',
-                                array('{class}' => get_class($this), '{event}' => $name, '{handler}' => $handler[1])));
-                        }
-                    } else { // PHP 5.3: anonymous function
-                        call_user_func($handler, $event);
-                    }
-                } else {
-                    throw new Exception(Mindy::t('yii', 'Event "{class}.{event}" is attached with an invalid handler "{handler}".',
-                        ['{class}' => get_class($this), '{event}' => $name, '{handler}' => gettype($handler)]));
-                }
-                // stop further handling if param.handled is set true
-                if (($event instanceof Event) && $event->handled) {
-                    return;
-                }
-            }
-        } elseif (YII_DEBUG && !$this->hasEvent($name)) {
-            throw new Exception(Mindy::t('yii', 'Event "{class}.{event}" is not defined.',
-                array('{class}' => get_class($this), '{event}' => $name)));
-        }
     }
 
     /**
