@@ -261,24 +261,29 @@ class File
      */
     protected static function copyDirectoryRecursive($src, $dst, $base, $fileTypes, $exclude, $level, $options)
     {
-        if (!is_dir($dst))
+        if (!is_dir($dst)) {
             self::createDirectory($dst, isset($options['newDirMode']) ? $options['newDirMode'] : null, false);
+        }
 
         $folder = opendir($src);
-        if ($folder === false)
+        if ($folder === false) {
             throw new Exception('Unable to open directory: ' . $src);
+        }
         while (($file = readdir($folder)) !== false) {
-            if ($file === '.' || $file === '..')
+            if ($file === '.' || $file === '..') {
                 continue;
+            }
             $path = $src . DIRECTORY_SEPARATOR . $file;
             $isFile = is_file($path);
             if (self::validatePath($base, $file, $isFile, $fileTypes, $exclude)) {
                 if ($isFile) {
                     copy($path, $dst . DIRECTORY_SEPARATOR . $file);
-                    if (isset($options['newFileMode']))
+                    if (isset($options['newFileMode'])) {
                         @chmod($dst . DIRECTORY_SEPARATOR . $file, $options['newFileMode']);
-                } elseif ($level)
+                    }
+                } elseif ($level) {
                     self::copyDirectoryRecursive($path, $dst . DIRECTORY_SEPARATOR . $file, $base . '/' . $file, $fileTypes, $exclude, $level - 1, $options);
+                }
             }
         }
         closedir($folder);
@@ -306,19 +311,22 @@ class File
     {
         $list = array();
         $handle = opendir($dir . $base);
-        if ($handle === false)
+        if ($handle === false) {
             throw new Exception('Unable to open directory: ' . $dir);
+        }
         while (($file = readdir($handle)) !== false) {
-            if ($file === '.' || $file === '..')
+            if ($file === '.' || $file === '..') {
                 continue;
+            }
             $path = substr($base . DIRECTORY_SEPARATOR . $file, 1);
             $fullPath = $dir . DIRECTORY_SEPARATOR . $path;
             $isFile = is_file($fullPath);
             if (self::validatePath($base, $file, $isFile, $fileTypes, $exclude)) {
-                if ($isFile)
+                if ($isFile) {
                     $list[] = $absolutePaths ? $fullPath : $path;
-                elseif ($level)
+                } elseif ($level) {
                     $list = array_merge($list, self::findFilesRecursive($dir, $base . '/' . $file, $fileTypes, $exclude, $level - 1, $absolutePaths));
+                }
             }
         }
         closedir($handle);
@@ -340,15 +348,18 @@ class File
     protected static function validatePath($base, $file, $isFile, $fileTypes, $exclude)
     {
         foreach ($exclude as $e) {
-            if ($file === $e || strpos($base . '/' . $file, $e) === 0)
+            if ($file === $e || strpos($base . '/' . $file, $e) === 0) {
                 return false;
+            }
         }
-        if (!$isFile || empty($fileTypes))
+        if (!$isFile || empty($fileTypes)) {
             return true;
-        if (($type = pathinfo($file, PATHINFO_EXTENSION)) !== '')
+        }
+        if (($type = pathinfo($file, PATHINFO_EXTENSION)) !== '') {
             return in_array($type, $fileTypes);
-        else
+        } else {
             return false;
+        }
     }
 
     /**
@@ -375,14 +386,42 @@ class File
             $options = defined('FILEINFO_MIME_TYPE') ? FILEINFO_MIME_TYPE : FILEINFO_MIME;
             $info = $magicFile === null ? finfo_open($options) : finfo_open($options, $magicFile);
 
-            if ($info && ($result = finfo_file($info, $file)) !== false)
+            if ($info && ($result = finfo_file($info, $file)) !== false) {
                 return $result;
+            }
         }
 
-        if (function_exists('mime_content_type') && ($result = mime_content_type($file)) !== false)
+        if (function_exists('mime_content_type') && ($result = mime_content_type($file)) !== false) {
             return $result;
+        }
 
         return $checkExtension ? self::getMimeTypeByExtension($file) : null;
+    }
+
+    public static function bytesToSize($bytes, $precision = 2)
+    {
+        $kilobyte = 1024;
+        $megabyte = $kilobyte * 1024;
+        $gigabyte = $megabyte * 1024;
+        $terabyte = $gigabyte * 1024;
+
+        if (($bytes >= 0) && ($bytes < $kilobyte)) {
+            return $bytes . ' B';
+
+        } elseif (($bytes >= $kilobyte) && ($bytes < $megabyte)) {
+            return round($bytes / $kilobyte, $precision) . ' KB';
+
+        } elseif (($bytes >= $megabyte) && ($bytes < $gigabyte)) {
+            return round($bytes / $megabyte, $precision) . ' MB';
+
+        } elseif (($bytes >= $gigabyte) && ($bytes < $terabyte)) {
+            return round($bytes / $gigabyte, $precision) . ' GB';
+
+        } elseif ($bytes >= $terabyte) {
+            return round($bytes / $terabyte, $precision) . ' TB';
+        } else {
+            return $bytes . ' B';
+        }
     }
 
     /**
@@ -397,16 +436,18 @@ class File
     public static function getMimeTypeByExtension($file, $magicFile = null)
     {
         static $extensions, $customExtensions = array();
-        if ($magicFile === null && $extensions === null)
+        if ($magicFile === null && $extensions === null) {
             $extensions = self::$mimeTypes;
-        elseif ($magicFile !== null && !isset($customExtensions[$magicFile]))
+        } elseif ($magicFile !== null && !isset($customExtensions[$magicFile])) {
             $customExtensions[$magicFile] = require($magicFile);
+        }
         if (($ext = pathinfo($file, PATHINFO_EXTENSION)) !== '') {
             $ext = strtolower($ext);
-            if ($magicFile === null && isset($extensions[$ext]))
+            if ($magicFile === null && isset($extensions[$ext])) {
                 return $extensions[$ext];
-            elseif ($magicFile !== null && isset($customExtensions[$magicFile][$ext]))
+            } elseif ($magicFile !== null && isset($customExtensions[$magicFile][$ext])) {
                 return $customExtensions[$magicFile][$ext];
+            }
         }
         return null;
     }
@@ -423,11 +464,13 @@ class File
      */
     public static function createDirectory($dst, $mode = null, $recursive = false)
     {
-        if ($mode === null)
+        if ($mode === null) {
             $mode = 0777;
+        }
         $prevDir = dirname($dst);
-        if ($recursive && !is_dir($dst) && !is_dir($prevDir))
+        if ($recursive && !is_dir($dst) && !is_dir($prevDir)) {
             self::createDirectory(dirname($dst), $mode, true);
+        }
         $res = mkdir($dst, $mode);
         @chmod($dst, $mode);
         return $res;
