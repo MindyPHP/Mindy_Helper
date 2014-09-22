@@ -57,10 +57,15 @@ trait BehaviorAccessors
                 }
             }
         }
-        throw new Exception(Mindy::t('yii', 'Property "{class}.{property}" is not defined.', [
+        $msg = strtr('Property "{class}.{property}" is not defined.', [
             '{class}' => get_class($this),
             '{property}' => $name
-        ]));
+        ]);
+//        $msg = Mindy::t('yii', 'Property "{class}.{property}" is not defined.', [
+//            '{class}' => get_class($this),
+//            '{property}' => $name
+//        ]);
+        throw new Exception($msg);
     }
 
     /**
