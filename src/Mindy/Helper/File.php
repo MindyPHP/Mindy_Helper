@@ -66,8 +66,7 @@ class File
     {
         foreach ($files as $key => $value) {
             if (is_array($value)) {
-                $item = $value[key($value)];
-                if (isset($item['error']) && $item['error'] == UPLOAD_ERR_NO_FILE) {
+                if (isset($value['error']) && $value['error'] == UPLOAD_ERR_NO_FILE) {
                     continue;
                 }
 
