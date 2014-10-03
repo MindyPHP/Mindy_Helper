@@ -91,7 +91,7 @@ class Meta
         return self::cleanSeparators($output, $separator);
     }
 
-    public static function generateKeywords($text)
+    public static function generateKeywords($text, $q = null)
     {
         $wordsArray = self::keywordsExplodeStr($text);
         $resultArray = self::keywordsCount($wordsArray);
@@ -108,7 +108,7 @@ class Meta
             }
         }
 
-        return trim(substr($str, 0, strlen($str) - 2));
+        return trim(mb_substr($str, 0, mb_strlen($str, 'UTF-8') - 2, 'UTF-8'));
     }
 
     protected static function keywordsExplodeStr($text)
@@ -130,7 +130,9 @@ class Meta
         $search[] = ($keywords) ? "/[^A-ZА-Я0-9]+/ui" : "/[^A-ZА-Я0-9,.;!?]+/ui";
         $replace[] = ($keywords) ? " " : " ";
 
-        return preg_replace($search, $replace, strip_tags($text));
+        $text = strip_tags($text);
+        $out = preg_replace($search, $replace, $text);
+        return $out ? $out : $text;
     }
 
     protected static function keywordsCount($wordsArray)
@@ -139,7 +141,7 @@ class Meta
 
         foreach ($wordsArray as $item) {
             if (mb_strlen($item, 'UTF-8') >= self::$keywords_max_length) {
-                $item = strtolower($item);
+                $item = mb_strtolower($item, 'UTF-8');
                 if (array_key_exists($item, $wordsArray)) {
                     $tmp[$item]++;
                 } else {
