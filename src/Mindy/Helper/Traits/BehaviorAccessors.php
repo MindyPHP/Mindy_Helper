@@ -15,14 +15,23 @@
 namespace Mindy\Helper\Traits;
 
 use Closure;
-use Mindy\Base\BaseList;
-use Mindy\Base\Exception\Exception;
+use Mindy\Exception\Exception;
 use Mindy\Base\Interfaces\IBehavior;
 use Mindy\Base\Mindy;
 use Mindy\Helper\Creator;
+use Mindy\Utils\BaseList;
 
 trait BehaviorAccessors
 {
+    /**
+     * @var array the behaviors that should be attached to the module.
+     * The behaviors will be attached to the module when {@link init} is called.
+     * Please refer to {@link CModel::behaviors} on how to specify the value of this property.
+     */
+    public $behaviors = [];
+    /**
+     * @var
+     */
     private $_m;
 
     /**
@@ -57,15 +66,10 @@ trait BehaviorAccessors
                 }
             }
         }
-        $msg = strtr('Property "{class}.{property}" is not defined.', [
+        throw new Exception(Mindy::t('base', 'Property "{class}.{property}" is not defined.', [
             '{class}' => get_class($this),
             '{property}' => $name
-        ]);
-//        $msg = Mindy::t('yii', 'Property "{class}.{property}" is not defined.', [
-//            '{class}' => get_class($this),
-//            '{property}' => $name
-//        ]);
-        throw new Exception($msg);
+        ]));
     }
 
     /**
@@ -107,25 +111,15 @@ trait BehaviorAccessors
             }
         }
         if (method_exists($this, 'get' . $name)) {
-//            $msg = Mindy::t('yii', 'Property "{class}.{property}" is read only.', [
-//                '{class}' => get_class($this),
-//                '{property}' => $name
-//            ]);
-            $msg = strtr('Property "{class}.{property}" is read only.', [
+            throw new Exception(Mindy::t('base', 'Property "{class}.{property}" is read only.', [
                 '{class}' => get_class($this),
                 '{property}' => $name
-            ]);
-            throw new Exception($msg);
+            ]));
         } else {
-//            $msg = Mindy::t('yii', 'Property "{class}.{property}" is not defined.', [
-//                '{class}' => get_class($this),
-//                '{property}' => $name
-//            ]);
-            $msg = strtr('Property "{class}.{property}" is not defined.', [
+            throw new Exception(Mindy::t('base', 'Property "{class}.{property}" is not defined.', [
                 '{class}' => get_class($this),
                 '{property}' => $name
-            ]);
-            throw new Exception($msg);
+            ]));
         }
     }
 
@@ -197,7 +191,7 @@ trait BehaviorAccessors
                 }
             }
         } elseif (method_exists($this, 'get' . $name)) {
-            throw new Exception(Mindy::t('yii', 'Property "{class}.{property}" is read only.',
+            throw new Exception(Mindy::t('base', 'Property "{class}.{property}" is read only.',
                 ['{class}' => get_class($this), '{property}' => $name]));
         }
     }
@@ -228,11 +222,8 @@ trait BehaviorAccessors
         if (class_exists('Closure', false) && ($this->canGetProperty($name) || property_exists($this, $name)) && $this->$name instanceof Closure) {
             return call_user_func_array($this->$name, $parameters);
         }
-//        $msg = Mindy::t('yii', '{class} and its behaviors do not have a method or closure named "{name}".',
-//            ['{class}' => get_class($this), '{name}' => $name]);
-        $msg = strtr('{class} and its behaviors do not have a method or closure named "{name}".',
-            ['{class}' => get_class($this), '{name}' => $name]);
-        throw new Exception($msg);
+        throw new Exception(Mindy::t('base', '{class} and its behaviors do not have a method or closure named "{name}".',
+            ['{class}' => get_class($this), '{name}' => $name]));
     }
 
     /**

@@ -27,7 +27,7 @@ use ArrayAccess;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
-use Mindy\Base\Exception\Exception;
+use Mindy\Exception\Exception;
 use Traversable;
 
 /**

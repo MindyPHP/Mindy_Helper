@@ -1,9 +1,9 @@
 <?php
 /**
- * 
+ *
  *
  * All rights reserved.
- * 
+ *
  * @author Falaleev Maxim
  * @email max@studio107.ru
  * @version 1.0
@@ -19,6 +19,10 @@ use InvalidArgumentException;
 
 class Creator
 {
+    /**
+     * @var string
+     */
+    public static $singletonMethod = 'getInstance';
     /**
      * @var array initial property values that will be applied to objects newly created via [[createObject]].
      * The array keys are class names without leading backslashes "\", and the array values are the corresponding
@@ -91,7 +95,6 @@ class Creator
         }
 
         $class = ltrim($class, '\\');
-
         if (isset(static::$objectConfig[$class])) {
             $config = array_merge(static::$objectConfig[$class], $config);
         }
@@ -108,7 +111,12 @@ class Creator
             if (!empty($config)) {
                 $args[] = $config;
             }
-            $obj = $reflection->newInstanceArgs($args);
+            if (method_exists($class, self::$singletonMethod)) {
+                $method = $reflection->getMethod(self::$singletonMethod);
+                $obj = $method->invokeArgs($class, $args);
+            } else {
+                $obj = $reflection->newInstanceArgs($args);
+            }
         } else {
             $obj = empty($config) ? new $class : new $class($config);
         }

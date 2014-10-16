@@ -22,6 +22,7 @@ class Xml
      * Convert an Array to XML
      * @param string $rootNode
      * @param array $arr - aray to be converterd
+     * @param bool $formatOutput
      * @param string $version
      * @param string $encoding
      * @internal param string $node_name - name of the root node to be converted
