@@ -79,16 +79,16 @@ class AccessorsTest extends TestCase
 
     public function testIsset()
     {
-        $this->assertTrue(isset($this->object->Text));
-        $this->assertFalse(empty($this->object->Text));
+        $this->assertTrue(isset($this->object->text));
+        $this->assertFalse(empty($this->object->text));
 
-        $this->object->Text = '';
-        $this->assertTrue(isset($this->object->Text));
-        $this->assertTrue(empty($this->object->Text));
+        $this->object->text = '';
+        $this->assertTrue(isset($this->object->text));
+        $this->assertTrue(empty($this->object->text));
 
-        $this->object->Text = null;
-        $this->assertFalse(isset($this->object->Text));
-        $this->assertTrue(empty($this->object->Text));
+        $this->object->text = null;
+        $this->assertFalse(isset($this->object->text));
+        $this->assertTrue(empty($this->object->text));
 
         $this->assertFalse(isset($this->object->unknownProperty));
         $this->assertTrue(empty($this->object->unknownProperty));
@@ -96,9 +96,9 @@ class AccessorsTest extends TestCase
 
     public function testUnset()
     {
-        unset($this->object->Text);
-        $this->assertFalse(isset($this->object->Text));
-        $this->assertTrue(empty($this->object->Text));
+        unset($this->object->text);
+        $this->assertFalse(isset($this->object->text));
+        $this->assertTrue(empty($this->object->text));
     }
 
     public function testUnsetReadOnlyProperty()

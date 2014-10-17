@@ -88,7 +88,7 @@ trait Accessors
      */
     public function __isset($name)
     {
-        $this->__issetInternal($name);
+        return $this->__issetInternal($name);
     }
 
     public function __issetInternal($name)
