@@ -139,7 +139,7 @@ trait Accessors
      */
     public function __call($name, $params)
     {
-        $this->__callInternal($name, $params);
+        return $this->__callInternal($name, $params);
     }
 
     public function __callInternal($name, $params)
