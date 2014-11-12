@@ -14,68 +14,67 @@
 
 namespace Mindy\Helper;
 
+use ArrayIterator;
+use Countable;
+use IteratorAggregate;
+use Serializable;
+use Traversable;
 
-use ArrayObject;
-use Mindy\Helper\Traits\Configurator;
-
-class Collection extends ArrayObject
+class Collection implements Countable, Serializable, IteratorAggregate
 {
-    use Configurator;
-
     /**
      * @var array
      */
-    public $data = [];
-    /**
-     * @var int
-     */
-    public $flags = 0;
-    /**
-     * @var string
-     */
-    public $iteratorClass = "ArrayIterator";
+    private $_data = [];
 
-    public function __construct(array $config = [])
+    public function __construct(array $data)
     {
-        $this->configure($config);
-        parent::__construct($this->data, $this->flags, $this->iteratorClass);
+        $this->_data = $data;
     }
 
     public function add($key, $value)
     {
-        $this->offsetSet($key, $value);
+        $this->_data[$key] = $value;
+        return $this;
     }
 
     public function has($key)
     {
-        return $this->offsetExists($key);
+        return array_key_exists($key, $this->_data);
     }
 
-    public function get($key, $defaultValue = null)
+    public function get($key, $default = null)
     {
-        return $this->has($key) ? $this->offsetGet($key) : $defaultValue;
+        return $this->has($key) ? $this->_data[$key] : $default;
     }
 
     public function all()
     {
-        return $this->getArrayCopy();
+        return $this->_data;
     }
 
     public function clear()
     {
-        return $this->data = [];
+        $this->_data = [];
+        return $this;
     }
 
     public function remove($key)
     {
         if ($this->has($key)) {
-            $this->offsetUnset($key);
+            unset($this->_data[$key]);
         }
     }
 
     public function toJson()
     {
-        return Json::encode($this->data);
+        return Json::encode($this->_data);
+    }
+
+    public function merge(array $data)
+    {
+        $this->_data = array_merge($this->_data, $data);
+        return $this;
     }
 
     /**
@@ -109,5 +108,49 @@ class Collection extends ArrayObject
             }
         }
         return $res;
+    }
+
+    /**
+     * Count elements of an object
+     * @link http://php.net/manual/en/countable.count.php
+     * @return int The custom count as an integer. The return value is cast to an integer.
+     */
+    public function count()
+    {
+        return count($this->_data);
+    }
+
+    /**
+     * String representation of object
+     * @link http://php.net/manual/en/serializable.serialize.php
+     * @return string the string representation of the object or null
+     */
+    public function serialize()
+    {
+        return serialize($this->_data);
+    }
+
+    /**
+     * Constructs the object
+     * @link http://php.net/manual/en/serializable.unserialize.php
+     * @param string $serialized
+     * The string representation of the object.
+     * @return void
+     */
+    public function unserialize($serialized)
+    {
+        $this->_data = unserialize($serialized);
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.0.0)<br/>
+     * Retrieve an external iterator
+     * @link http://php.net/manual/en/iteratoraggregate.getiterator.php
+     * @return Traversable An instance of an object implementing <b>Iterator</b> or
+     * <b>Traversable</b>
+     */
+    public function getIterator()
+    {
+        return new ArrayIterator($this->_data);
     }
 }
