@@ -18,6 +18,10 @@ class Csv
      */
     public $delimeter = ";";
     /**
+     * @var string convert from charset
+     */
+    public $fromCharset = "cp1251";
+    /**
      * @var string convert to charset
      */
     public $toCharset = "UTF-8";
@@ -31,6 +35,7 @@ class Csv
     {
         $config = new LexerConfig();
         $config->setDelimiter($this->delimeter);
+        $config->setFromCharset($this->fromCharset);
         $config->setToCharset($this->toCharset);
 
         $lexer = new Lexer($config);

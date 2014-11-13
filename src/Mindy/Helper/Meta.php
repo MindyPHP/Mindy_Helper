@@ -1,9 +1,9 @@
 <?php
 /**
- * 
+ *
  *
  * All rights reserved.
- * 
+ *
  * @author Falaleev Maxim
  * @email max@studio107.ru
  * @version 1.0
@@ -15,7 +15,7 @@
 namespace Mindy\Helper;
 
 
-class Meta 
+class Meta
 {
     /**
      * @var int
@@ -29,6 +29,10 @@ class Meta
      * @var int
      */
     public static $keywords_count = 10;
+    /**
+     * @var string default encoding
+     */
+    public static $encoding = 'UTF-8';
 
     /**
      * @param $string
@@ -41,7 +45,7 @@ class Meta
         $output = $string;
 
         // Clean duplicate or trailing separators.
-        if (isset($separator) && strlen($separator)) {
+        if (isset($separator) && mb_strlen($separator, self::$encoding)) {
             // Escape the separator.
             $seppattern = preg_quote($separator, '/');
 
@@ -57,7 +61,7 @@ class Meta
 
         // Optionally convert to lower case.
         if ($toLowCase) {
-            $output = strtolower($output);
+            $output = mb_strtolower($output, self::$encoding);
         }
 
         return $output;
@@ -65,33 +69,25 @@ class Meta
 
     public static function cleanString($string, $separator = '-', $cleanPunctuation = true, $cleanSlash = true)
     {
-        $output = $string;
         if ($cleanPunctuation) {
-            $punctuation = self::$punctuations;
-            foreach ($punctuation as $details) {
-                // Slightly tricky inline if which either replaces with the separator or nothing
-                //                $output = str_replace($details['value'], $separator, $output);
-                $output = str_replace($details, $separator, $output);
-            }
+            $string = str_replace(self::$punctuations, $separator, $string);
         }
 
         // If something is already urlsafe then don't remove slashes
         if ($cleanSlash) {
-            $output = str_replace('/', '', $output);
+            $string = str_replace('/', $separator, $string);
         }
-
-        // Optionally remove accents and transliterate
-        $translations = self::$dictArray;
-        $output = strtr($output, $translations);
+        $string = strtr($string, self::$dictArray);
 
         // Always replace whitespace with the separator.
-        $output = preg_replace('/\s+/', $separator, $output);
+        $string = preg_replace('/\s+/', $separator, $string);
 
         // Trim duplicates and remove trailing and leading separators.
-        return self::cleanSeparators($output, $separator);
+        $value = self::cleanSeparators($string, $separator);
+        return $value;
     }
 
-    public static function generateKeywords($text, $q = null)
+    public static function generateKeywords($text)
     {
         $wordsArray = self::keywordsExplodeStr($text);
         $resultArray = self::keywordsCount($wordsArray);
@@ -108,7 +104,7 @@ class Meta
             }
         }
 
-        return trim(mb_substr($str, 0, mb_strlen($str, 'UTF-8') - 2, 'UTF-8'));
+        return trim(mb_substr($str, 0, mb_strlen($str, self::$encoding) - 2, self::$encoding));
     }
 
     protected static function keywordsExplodeStr($text)
@@ -140,8 +136,8 @@ class Meta
         $tmp = [];
 
         foreach ($wordsArray as $item) {
-            if (mb_strlen($item, 'UTF-8') >= self::$keywords_max_length) {
-                $item = mb_strtolower($item, 'UTF-8');
+            if (mb_strlen($item, self::$encoding) >= self::$keywords_max_length) {
+                $item = mb_strtolower($item, self::$encoding);
                 if (array_key_exists($item, $wordsArray)) {
                     $tmp[$item]++;
                 } else {
@@ -166,7 +162,7 @@ class Meta
             $text = join($sep, array_slice($words, 0, self::$description_length));
         }
 
-        return (mb_strlen($text, 'utf-8') > 200) ? mb_substr($text, 0, 200, 'utf-8') : $text;
+        return (mb_strlen($text, self::$encoding) > 200) ? mb_substr($text, 0, 200, self::$encoding) : $text;
     }
 
     private static $dictArray = [
@@ -378,7 +374,6 @@ class Meta
         "Ᾰ" => "A",
         "Ᾱ" => "A",
         "Ὰ" => "A",
-        "Ά" => "A",
         "ᾼ" => "A",
         "Β" => "B",
         "Γ" => "G",
@@ -391,7 +386,6 @@ class Meta
         "Ἓ" => "E",
         "Ἔ" => "E",
         "Ἕ" => "E",
-        "Έ" => "E",
         "Ὲ" => "E",
         "Ζ" => "Z",
         "Η" => "I",
@@ -413,7 +407,6 @@ class Meta
         "ᾞ" => "I",
         "ᾟ" => "I",
         "Ὴ" => "I",
-        "Ή" => "I",
         "ῌ" => "I",
         "Θ" => "TH",
         "Ι" => "I",
@@ -430,7 +423,6 @@ class Meta
         "Ῐ" => "I",
         "Ῑ" => "I",
         "Ὶ" => "I",
-        "Ί" => "I",
         "Κ" => "K",
         "Λ" => "L",
         "Μ" => "M",
@@ -445,7 +437,6 @@ class Meta
         "Ὄ" => "O",
         "Ὅ" => "O",
         "Ὸ" => "O",
-        "Ό" => "O",
         "Π" => "P",
         "Ρ" => "R",
         "Ῥ" => "R",
@@ -461,7 +452,6 @@ class Meta
         "Ῠ" => "Y",
         "Ῡ" => "Y",
         "Ὺ" => "Y",
-        "Ύ" => "Y",
         "Φ" => "F",
         "Χ" => "X",
         "Ψ" => "PS",
@@ -484,7 +474,6 @@ class Meta
         "ᾮ" => "O",
         "ᾯ" => "O",
         "Ὼ" => "O",
-        "Ώ" => "O",
         "ῼ" => "O",
         "α" => "a",
         "ά" => "a",
@@ -505,7 +494,6 @@ class Meta
         "ᾆ" => "a",
         "ᾇ" => "a",
         "ὰ" => "a",
-        "ά" => "a",
         "ᾰ" => "a",
         "ᾱ" => "a",
         "ᾲ" => "a",
@@ -525,7 +513,6 @@ class Meta
         "ἔ" => "e",
         "ἕ" => "e",
         "ὲ" => "e",
-        "έ" => "e",
         "ζ" => "z",
         "η" => "i",
         "ή" => "i",
@@ -546,7 +533,6 @@ class Meta
         "ᾖ" => "i",
         "ᾗ" => "i",
         "ὴ" => "i",
-        "ή" => "i",
         "ῂ" => "i",
         "ῃ" => "i",
         "ῄ" => "i",
@@ -566,11 +552,9 @@ class Meta
         "ἶ" => "i",
         "ἷ" => "i",
         "ὶ" => "i",
-        "ί" => "i",
         "ῐ" => "i",
         "ῑ" => "i",
         "ῒ" => "i",
-        "ΐ" => "i",
         "ῖ" => "i",
         "ῗ" => "i",
         "κ" => "k",
@@ -587,7 +571,6 @@ class Meta
         "ὄ" => "o",
         "ὅ" => "o",
         "ὸ" => "o",
-        "ό" => "o",
         "π" => "p",
         "ρ" => "r",
         "ῤ" => "r",
@@ -608,11 +591,9 @@ class Meta
         "ὖ" => "y",
         "ὗ" => "y",
         "ὺ" => "y",
-        "ύ" => "y",
         "ῠ" => "y",
         "ῡ" => "y",
         "ῢ" => "y",
-        "ΰ" => "y",
         "ῦ" => "y",
         "ῧ" => "y",
         "φ" => "f",
@@ -637,7 +618,6 @@ class Meta
         "ᾦ" => "o",
         "ᾧ" => "o",
         "ὼ" => "o",
-        "ώ" => "o",
         "ῲ" => "o",
         "ῳ" => "o",
         "ῴ" => "o",
@@ -656,7 +636,6 @@ class Meta
         "῀" => "",
         "῁" => "",
         "΄" => "",
-        "΅" => "",
         "`" => "",
         "῭" => "",
         "ͺ" => "",
@@ -730,7 +709,7 @@ class Meta
         "ð" => "d",
         "Ð" => "D",
         "þ" => "th",
-        "Þ" => "TH"
+        "Þ" => "TH",
     ];
 
     private static $punctuations = [
@@ -774,6 +753,8 @@ class Meta
         "quote1" => "”",
         "quote2" => "“",
         "tiredash" => "-—-",
-        "tripletire" => "---"
+        "tripletire" => "---",
+        "trademark" => "®",
+        "copyright" => "©"
     ];
 }
