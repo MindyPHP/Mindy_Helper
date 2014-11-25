@@ -10,7 +10,7 @@
     "require": {
         "php": ">=5.4",
         "mindy/exception": "dev-master",
-        "goodby/csv": "dev-master"
+        "goodby/csv": "*"
     },
     "require-dev": {
         "satooshi/php-coveralls": "dev-master"
