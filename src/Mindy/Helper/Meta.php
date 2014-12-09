@@ -755,6 +755,7 @@ class Meta
         "tiredash" => "-—-",
         "tripletire" => "---",
         "trademark" => "®",
-        "copyright" => "©"
+        "copyright" => "©",
+        "altertire" => "–"
     ];
 }
