@@ -55,7 +55,7 @@ class Json
      */
     public static function decode($json, $asArray = true)
     {
-        if (is_array($json)) {
+        if (!is_string($json)) {
             throw new InvalidParamException('Invalid JSON data.');
         }
         $decode = json_decode((string) $json, $asArray);
