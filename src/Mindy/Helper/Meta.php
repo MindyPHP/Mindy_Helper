@@ -77,6 +77,7 @@ class Meta
         if ($cleanSlash) {
             $string = str_replace('/', $separator, $string);
         }
+
         $string = strtr($string, self::$dictArray);
 
         // Always replace whitespace with the separator.
@@ -165,7 +166,7 @@ class Meta
         return (mb_strlen($text, self::$encoding) > 200) ? mb_substr($text, 0, 200, self::$encoding) : $text;
     }
 
-    private static $dictArray = [
+    public static $dictArray = [
         "À" => "A",
         "Á" => "A",
         "Â" => "A",
@@ -712,7 +713,7 @@ class Meta
         "Þ" => "TH",
     ];
 
-    private static $punctuations = [
+    public static $punctuations = [
         "double_quotes" => '"',
         "quotes" => "'",
         "backtick" => "`",
