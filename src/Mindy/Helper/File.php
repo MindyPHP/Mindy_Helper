@@ -181,8 +181,9 @@ class File
         $exclude = array();
         $level = -1;
         extract($options);
-        if (!is_dir($dst))
+        if (!is_dir($dst)) {
             self::createDirectory($dst, isset($options['newDirMode']) ? $options['newDirMode'] : null, true);
+        }
 
         self::copyDirectoryRecursive($src, $dst, '', $fileTypes, $exclude, $level, $options);
     }
@@ -196,15 +197,19 @@ class File
     {
         $items = glob($directory . DIRECTORY_SEPARATOR . '{,.}*', GLOB_MARK | GLOB_BRACE);
         foreach ($items as $item) {
-            if (basename($item) == '.' || basename($item) == '..')
+            if (basename($item) == '.' || basename($item) == '..') {
                 continue;
-            if (substr($item, -1) == DIRECTORY_SEPARATOR)
+            }
+            if (substr($item, -1) == DIRECTORY_SEPARATOR) {
                 self::removeDirectory($item);
-            else
+            } else {
                 unlink($item);
+            }
         }
-        if (is_dir($directory))
+
+        if (is_dir($directory)) {
             rmdir($directory);
+        }
     }
 
     /**
