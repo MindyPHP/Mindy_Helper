@@ -4,13 +4,13 @@
     "version": "0.1",
     "license": "MIT",
     "autoload": {
-        "psr-0": {
-            "": "src/"
+        "psr-4": {
+            "Mindy\\Helper\\": "src/Mindy/Helper"
         }
     },
     "require": {
         "php": ">=5.4",
-        "mindy/exception": "dev-master",
+        "mindy/exception": "0.1",
         "goodby/csv": "*"
     },
     "require-dev": {
