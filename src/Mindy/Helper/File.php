@@ -437,9 +437,9 @@ class File
      * This parameter has been available since version 1.1.3.
      * @return string the MIME type. Null is returned if the MIME type cannot be determined.
      */
-    public static function getMimeTypeByExtension($file, $magicFile = null)
+    public static function getMimeTypeByFileName($file, $magicFile = null)
     {
-        static $extensions, $customExtensions = array();
+        static $extensions, $customExtensions = [];
         if ($magicFile === null && $extensions === null) {
             $extensions = self::$mimeTypes;
         } elseif ($magicFile !== null && !isset($customExtensions[$magicFile])) {
@@ -452,6 +452,32 @@ class File
             } elseif ($magicFile !== null && isset($customExtensions[$magicFile][$ext])) {
                 return $customExtensions[$magicFile][$ext];
             }
+        }
+        return null;
+    }
+
+    /**
+     * Determines the MIME type based on the extension name of the specified file.
+     * This method will use a local map between extension name and MIME type.
+     * @param string $file the file name.
+     * @param string $magicFile the path of the file that contains all available MIME type information.
+     * If this is not set, the default 'system.utils.mimeTypes' file will be used.
+     * This parameter has been available since version 1.1.3.
+     * @return string the MIME type. Null is returned if the MIME type cannot be determined.
+     */
+    public static function getMimeTypeByExtension($ext, $magicFile = null)
+    {
+        static $extensions, $customExtensions = [];
+        if ($magicFile === null && $extensions === null) {
+            $extensions = self::$mimeTypes;
+        } elseif ($magicFile !== null && !isset($customExtensions[$magicFile])) {
+            $customExtensions[$magicFile] = require($magicFile);
+        }
+        $ext = strtolower($ext);
+        if ($magicFile === null && isset($extensions[$ext])) {
+            return $extensions[$ext];
+        } elseif ($magicFile !== null && isset($customExtensions[$magicFile][$ext])) {
+            return $customExtensions[$magicFile][$ext];
         }
         return null;
     }
