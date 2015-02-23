@@ -1,25 +1,4 @@
 <?php
-/**
- *
- *
- * All rights reserved.
- *
- * @author Falaleev Maxim
- * @email max@studio107.ru
- * @version 1.0
- * @company Studio107
- * @site http://studio107.ru
- * @date 16/06/14.06.2014 16:26
- */
-
-/**
- * CPasswordHelper class file.
- *
- * @author Tom Worster <fsb@thefsb.org>
- * @link http://www.yiiframework.com/
- * @copyright 2008-2013 Yii Software LLC
- * @license http://www.yiiframework.com/license/
- */
 
 namespace Mindy\Helper;
 
@@ -65,7 +44,7 @@ use Mindy\Base\Mindy;
  * </pre>
  *
  * @author Tom Worster <fsb@thefsb.org>
- * @package system.utils
+ * @package Mindy\Helper
  * @since 1.1.14
  */
 class Password

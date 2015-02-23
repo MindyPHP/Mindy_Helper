@@ -21,6 +21,10 @@ use Mindy\Base\Mindy;
 use Mindy\Helper\Creator;
 use Mindy\Utils\BaseList;
 
+/**
+ * Class BehaviorAccessors
+ * @package Mindy\Helper
+ */
 trait BehaviorAccessors
 {
     /**

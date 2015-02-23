@@ -1,18 +1,19 @@
 <?php
 
-// TODO need refactoring
-
 namespace Mindy\Helper;
 
 /**
  * Calendar Generation Class
  * This class provides a simple reuasable means to produce month calendars in valid html
  *
+ * TODO need refactoring
+ *
  * @version 2.8
  * @author Jim Mayes <jim.mayes@gmail.com>
  * @link http://style-vs-substance.com
  * @copyright Copyright (c) 2008, Jim Mayes
  * @license http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt GPL v2.0
+ * @package Mindy\Helper
  */
 class Calendar
 {

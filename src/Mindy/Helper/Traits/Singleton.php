@@ -14,10 +14,13 @@
 
 namespace Mindy\Helper\Traits;
 
-
 use Mindy\Helper\Creator;
 use ReflectionClass;
 
+/**
+ * Class Singleton
+ * @package Mindy\Helper
+ */
 trait Singleton
 {
     protected static $instance;

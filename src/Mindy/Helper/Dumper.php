@@ -1,10 +1,4 @@
 <?php
-/**
- * @author Qiang Xue <qiang.xue@gmail.com>
- * @link http://www.yiiframework.com/
- * @copyright Copyright &copy; 2008-2011 Yii Software LLC
- * @license http://www.yiiframework.com/license/
- */
 
 namespace Mindy\Helper;
 
@@ -15,6 +9,7 @@ namespace Mindy\Helper;
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
+ * @package Mindy\Helper
  */
 class Dumper
 {

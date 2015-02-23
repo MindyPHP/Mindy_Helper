@@ -1,14 +1,14 @@
 <?php
 
-// TODO need refactoring
 namespace Mindy\Helper;
 
 /**
+ * TODO need refactoring
  * @author Falaleev Maxim <max@studio107.com>
  * @link http://studio107.ru/
  * @copyright Copyright &copy; 2010-2012 Studio107
  * @license http://www.cms107.com/license/
- * @package modules.core.utils
+ * @package Mindy\Helper
  * @since 1.1.1
  * @version 1.0
  *

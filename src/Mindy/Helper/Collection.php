@@ -1,16 +1,4 @@
 <?php
-/**
- * 
- *
- * All rights reserved.
- * 
- * @author Falaleev Maxim
- * @email max@studio107.ru
- * @version 1.0
- * @company Studio107
- * @site http://studio107.ru
- * @date 05/09/14.09.2014 13:46
- */
 
 namespace Mindy\Helper;
 
@@ -20,6 +8,10 @@ use IteratorAggregate;
 use Serializable;
 use Traversable;
 
+/**
+ * Class Collection
+ * @package Mindy\Helper
+ */
 class Collection implements Countable, Serializable, IteratorAggregate
 {
     /**

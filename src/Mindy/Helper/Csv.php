@@ -9,6 +9,10 @@ use Goodby\CSV\Import\Standard\LexerConfig;
 use Mindy\Helper\Traits\Accessors;
 use Mindy\Helper\Traits\Configurator;
 
+/**
+ * Class Csv
+ * @package Mindy\Helper
+ */
 class Csv
 {
     use Configurator, Accessors;

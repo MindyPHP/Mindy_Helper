@@ -14,10 +14,15 @@
 
 namespace Mindy\Helper;
 
-
+/**
+ * Class Arr
+ * @package Mindy\Helper
+ */
 class Arr 
 {
     /**
+     * TODO wtf?
+     * @DEPRECATED
      * @param array $data
      * @param $by int
      * @return array

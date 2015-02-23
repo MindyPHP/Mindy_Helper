@@ -2,6 +2,10 @@
 
 namespace Mindy\Helper;
 
+/**
+ * Class Ping
+ * @package Mindy\Helper
+ */
 class Ping
 {
     public $pingSearchEngines = [

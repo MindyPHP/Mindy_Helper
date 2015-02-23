@@ -1,27 +1,7 @@
 <?php
-/**
- *
- *
- * All rights reserved.
- *
- * @author Falaleev Maxim
- * @email max@studio107.ru
- * @version 1.0
- * @company Studio107
- * @site http://studio107.ru
- * @date 19/06/14.06.2014 13:32
- */
 
 namespace Mindy\Helper;
 
-/**
- * CJavaScriptExpression class file.
- *
- * @author Alexander Makarov <sam@rmcreative.ru>
- * @link http://www.yiiframework.com/
- * @copyright Copyright &copy; 2012 Yii Software LLC
- * @license http://www.yiiframework.com/license/
- */
 use Exception;
 
 /**
@@ -29,7 +9,7 @@ use Exception;
  * It can be passed to {@link CJavaScript::encode()} and the code will stay as is.
  *
  * @author Alexander Makarov <sam@rmcreative.ru>
- * @package system.web.helpers
+ * @package Mindy\Helper
  * @since 1.1.11
  */
 class JavaScriptExpression

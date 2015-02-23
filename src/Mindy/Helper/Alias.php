@@ -14,9 +14,12 @@
 
 namespace Mindy\Helper;
 
-
 use InvalidArgumentException;
 
+/**
+ * Class Alias
+ * @package Mindy\Helper
+ */
 class Alias
 {
     private static $_aliases = [];

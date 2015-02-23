@@ -19,7 +19,6 @@ use Mindy\Exception\UnknownMethodException;
 use Mindy\Exception\UnknownPropertyException;
 use Mindy\Helper\Interfaces\Arrayable;
 
-
 /**
  * Object is the base class that implements the *property* feature.
  *
@@ -27,6 +26,7 @@ use Mindy\Helper\Interfaces\Arrayable;
  *
  * @author Qiang Xue <qiang.xue@gmail.com>
  * @since 2.0
+ * @package Mindy\Helper
  */
 class Object implements Arrayable
 {

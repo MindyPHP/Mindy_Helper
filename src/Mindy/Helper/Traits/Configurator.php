@@ -17,7 +17,10 @@ namespace Mindy\Helper\Traits;
 use Mindy\Helper\Creator;
 use ReflectionClass;
 
-
+/**
+ * Class Configurator
+ * @package Mindy\Helper
+ */
 trait Configurator
 {
     /**

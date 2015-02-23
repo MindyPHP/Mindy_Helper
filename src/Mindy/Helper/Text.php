@@ -2,6 +2,10 @@
 
 namespace Mindy\Helper;
 
+/**
+ * Class Text
+ * @package Mindy\Helper
+ */
 class Text
 {
     public static function rightLetter($str)
