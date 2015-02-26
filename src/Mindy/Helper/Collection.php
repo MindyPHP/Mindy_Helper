@@ -145,4 +145,12 @@ class Collection implements Countable, Serializable, IteratorAggregate
     {
         return new ArrayIterator($this->_data);
     }
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->_data;
+    }
 }
