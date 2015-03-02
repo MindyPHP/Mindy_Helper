@@ -1,7 +1,7 @@
 {
     "name": "mindy/helper",
     "homepage": "https://github.com/studio107/Mindy_Helper",
-    "version": "0.1",
+    "version": "0.3",
     "license": "MIT",
     "autoload": {
         "psr-4": {
