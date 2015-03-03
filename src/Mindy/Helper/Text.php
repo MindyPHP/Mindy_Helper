@@ -60,16 +60,16 @@ class Text
 
     public static function mbUcfirst($word)
     {
-        return mb_strtoupper(mb_substr($word, 0, 1, 'UTF-8'), 'UTF-8') . mb_substr(mb_convert_case($word, MB_CASE_LOWER, 'UTF-8'), 1, mb_strlen($word), 'UTF-8');
+        return mb_strtoupper(mb_substr($word, 0, 1, 'UTF-8'), 'UTF-8') . mb_substr(mb_convert_case($word, MB_CASE_LOWER, 'UTF-8'), 1, mb_strlen($word, 'UTF-8'), 'UTF-8');
     }
 
     public static function startsWith($haystack, $needle)
     {
-        return $needle === "" || strpos($haystack, $needle) === 0;
+        return $needle === "" || mb_strpos($haystack, $needle, 'UTF-8') === 0;
     }
 
     public static function endsWith($haystack, $needle)
     {
-        return $needle === "" || strpos($haystack, -strlen($needle)) === $needle;
+        return $needle === "" || mb_strrpos($haystack, $needle, 'UTF-8') === mb_strlen($haystack, 'UTF-8') - mb_strlen($needle, 'UTF-8');
     }
 }
