@@ -65,11 +65,11 @@ class Text
 
     public static function startsWith($haystack, $needle)
     {
-        return $needle === "" || mb_strpos($haystack, $needle, 'UTF-8') === 0;
+        return $needle === "" || mb_strpos($haystack, $needle, 0, 'UTF-8') === 0;
     }
 
     public static function endsWith($haystack, $needle)
     {
-        return $needle === "" || mb_strrpos($haystack, $needle, 'UTF-8') === mb_strlen($haystack, 'UTF-8') - mb_strlen($needle, 'UTF-8');
+        return $needle === "" || mb_strrpos($haystack, $needle, 0, 'UTF-8') === mb_strlen($haystack, 'UTF-8') - mb_strlen($needle, 'UTF-8');
     }
 }
