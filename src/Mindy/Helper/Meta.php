@@ -84,11 +84,9 @@ class Meta
         $wordsArray = self::keywordsExplodeStr($text);
         $resultArray = self::keywordsCount($wordsArray);
 
-        $arr = array_slice($resultArray, 0, 30);
         $str = "";
-
         $i = 0;
-        foreach ($arr as $key => $val) {
+        foreach ($resultArray as $key => $val) {
             $str .= $key . ", ";
             $i++;
             if ($i == self::$keywords_count) {
