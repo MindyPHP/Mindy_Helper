@@ -486,6 +486,62 @@ class File
         return $res;
     }
 
+    /**
+     * Locale-safe basename
+     * @param $filename
+     * @return string
+     */
+    public static function mbBasename($filename)
+    {
+        $path = rtrim($filename, DIRECTORY_SEPARATOR);
+        $lastSeparator = mb_strrpos($path, DIRECTORY_SEPARATOR, 0, 'UTF-8');
+        $lastSeparator = $lastSeparator === false ? 0 : $lastSeparator + 1;
+        return mb_substr($path, $lastSeparator, null, 'UTF-8');
+    }
+
+    public static function mbPathinfo($path, $options = null)
+    {
+        $info = array('dirname' => '', 'basename' => '', 'extension' => '', 'filename' => '');
+        $path = rtrim($path, DIRECTORY_SEPARATOR);
+        $lastSeparator = mb_strrpos($path, DIRECTORY_SEPARATOR, 0, 'UTF-8');
+        if ($lastSeparator !== false) {
+            $info['basename'] = mb_substr($path, $lastSeparator + 1, null, 'UTF-8');
+            $info['dirname'] = mb_substr($path, 0, $lastSeparator, 'UTF-8');
+        } else {
+            $info['basename'] = $path;
+        }
+
+        $lastDot = mb_strrpos($info['basename'], '.', 0, 'UTF-8');
+        if ($lastDot !== false) {
+            $info['extension'] = mb_substr($info['basename'], $lastDot + 1, null, 'UTF-8');
+            $info['filename'] = mb_substr($info['basename'], 0, $lastDot, 'UTF-8');
+        } else {
+            $info['filename'] = $info['basename'];
+        }
+
+        switch ($options) {
+            case PATHINFO_DIRNAME:
+            case 'dirname':
+                return $info['dirname'];
+                break;
+            case PATHINFO_BASENAME:
+            case 'basename':
+                return $info['basename'];
+                break;
+            case PATHINFO_EXTENSION:
+            case 'extension':
+                return $info['extension'];
+                break;
+            case PATHINFO_FILENAME:
+            case 'filename':
+                return $info['filename'];
+                break;
+            default:
+                return $info;
+        }
+    }
+
+
     public static $mimeTypes = array(
         'ai' => 'application/postscript',
         'aif' => 'audio/x-aiff',
