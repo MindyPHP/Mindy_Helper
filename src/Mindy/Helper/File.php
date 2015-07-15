@@ -501,40 +501,43 @@ class File
 
     public static function mbPathinfo($path, $options = null)
     {
-        $ret = array('dirname' => '', 'basename' => '', 'extension' => '', 'filename' => '');
-        $m = array();
-        preg_match('%^(.*?)[\\\\/]*(([^/\\\\]*?)(\.([^\.\\\\/]+?)|))[\\\\/\.]*$%im', $path, $m);
-        if (array_key_exists(1, $m)) {
-            $ret['dirname'] = $m[1];
+        $info = array('dirname' => '', 'basename' => '', 'extension' => '', 'filename' => '');
+        $path = rtrim($path, DIRECTORY_SEPARATOR);
+        $lastSeparator = mb_strrpos($path, DIRECTORY_SEPARATOR, 0, 'UTF-8');
+        if ($lastSeparator !== false) {
+            $info['basename'] = mb_substr($path, $lastSeparator + 1, null, 'UTF-8');
+            $info['dirname'] = mb_substr($path, 0, $lastSeparator, 'UTF-8');
+        } else {
+            $info['basename'] = $path;
         }
-        if (array_key_exists(2, $m)) {
-            $ret['basename'] = $m[2];
+
+        $lastDot = mb_strrpos($info['basename'], '.', 0, 'UTF-8');
+        if ($lastDot !== false) {
+            $info['extension'] = mb_substr($info['basename'], $lastDot + 1, null, 'UTF-8');
+            $info['filename'] = mb_substr($info['basename'], 0, $lastDot, 'UTF-8');
+        } else {
+            $info['filename'] = $info['basename'];
         }
-        if (array_key_exists(5, $m)) {
-            $ret['extension'] = $m[5];
-        }
-        if (array_key_exists(3, $m)) {
-            $ret['filename'] = $m[3];
-        }
+
         switch ($options) {
             case PATHINFO_DIRNAME:
             case 'dirname':
-                return $ret['dirname'];
+                return $info['dirname'];
                 break;
             case PATHINFO_BASENAME:
             case 'basename':
-                return $ret['basename'];
+                return $info['basename'];
                 break;
             case PATHINFO_EXTENSION:
             case 'extension':
-                return $ret['extension'];
+                return $info['extension'];
                 break;
             case PATHINFO_FILENAME:
             case 'filename':
-                return $ret['filename'];
+                return $info['filename'];
                 break;
             default:
-                return $ret;
+                return $info;
         }
     }
 
