@@ -486,6 +486,59 @@ class File
         return $res;
     }
 
+    /**
+     * Locale-safe basename
+     * @param $filename
+     * @return string
+     */
+    public static function mbBasename($filename)
+    {
+        $path = rtrim($filename, DIRECTORY_SEPARATOR);
+        $lastSeparator = mb_strrpos($path, DIRECTORY_SEPARATOR, 0, 'UTF-8');
+        $lastSeparator = $lastSeparator === false ? 0 : $lastSeparator + 1;
+        return mb_substr($path, $lastSeparator, null, 'UTF-8');
+    }
+
+    public static function mbPathinfo($path, $options = null)
+    {
+        $ret = array('dirname' => '', 'basename' => '', 'extension' => '', 'filename' => '');
+        $m = array();
+        preg_match('%^(.*?)[\\\\/]*(([^/\\\\]*?)(\.([^\.\\\\/]+?)|))[\\\\/\.]*$%im', $path, $m);
+        if (array_key_exists(1, $m)) {
+            $ret['dirname'] = $m[1];
+        }
+        if (array_key_exists(2, $m)) {
+            $ret['basename'] = $m[2];
+        }
+        if (array_key_exists(5, $m)) {
+            $ret['extension'] = $m[5];
+        }
+        if (array_key_exists(3, $m)) {
+            $ret['filename'] = $m[3];
+        }
+        switch ($options) {
+            case PATHINFO_DIRNAME:
+            case 'dirname':
+                return $ret['dirname'];
+                break;
+            case PATHINFO_BASENAME:
+            case 'basename':
+                return $ret['basename'];
+                break;
+            case PATHINFO_EXTENSION:
+            case 'extension':
+                return $ret['extension'];
+                break;
+            case PATHINFO_FILENAME:
+            case 'filename':
+                return $ret['filename'];
+                break;
+            default:
+                return $ret;
+        }
+    }
+
+
     public static $mimeTypes = array(
         'ai' => 'application/postscript',
         'aif' => 'audio/x-aiff',
