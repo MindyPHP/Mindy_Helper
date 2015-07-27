@@ -23,8 +23,6 @@ use ReflectionClass;
  */
 trait Configurator
 {
-    public $autoCamelCase = false;
-
     /**
      * @return string the fully qualified name of this class.
      */
@@ -65,7 +63,8 @@ trait Configurator
     protected function configure($config = [])
     {
         if (!empty($config)) {
-            Creator::configure($this, $config, $this->autoCamelCase);
+            $autoCamelCase = isset($this->autoCamelCase) ? $this->autoCamelCase : false;
+            Creator::configure($this, $config, $autoCamelCase);
         }
     }
 
