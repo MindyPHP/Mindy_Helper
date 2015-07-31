@@ -18,7 +18,6 @@ class Xml
      * @param bool $formatOutput
      * @param string $version
      * @param string $encoding
-     * @internal param string $node_name - name of the root node to be converted
      * @return string
      */
     public static function encode($rootNode = 'response', array $arr = [], $formatOutput = false, $version = '1.0', $encoding = 'UTF-8')

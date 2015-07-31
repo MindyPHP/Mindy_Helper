@@ -15,7 +15,7 @@ class Meta
     /**
      * @var int
      */
-    public static $keywords_max_length = 5;
+    public static $keywords_max_length = 3;
     /**
      * @var int
      */
