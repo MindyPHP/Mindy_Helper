@@ -3,6 +3,7 @@
 namespace Mindy\Helper;
 
 use InvalidArgumentException;
+use Mindy\Helper\Traits\Configurator;
 
 /**
  * Class Creator
@@ -111,7 +112,28 @@ class Creator
         } else {
             $obj = empty($config) ? new $class : new $class($config);
         }
-        return self::configure($obj, $config);
+
+
+        if (array_key_exists(Configurator::className(), self::class_uses_deep($obj))) {
+            return $obj;
+        } else {
+            return self::configure($obj, $config);
+        }
+    }
+
+    public static function class_uses_deep($class, $autoload = true)
+    {
+        $traits = [];
+
+        do {
+            $traits = array_merge(class_uses($class, $autoload), $traits);
+        } while ($class = get_parent_class($class));
+
+        foreach ($traits as $trait => $same) {
+            $traits = array_merge(class_uses($trait, $autoload), $traits);
+        }
+
+        return array_unique($traits);
     }
 
     /**
@@ -120,12 +142,9 @@ class Creator
      * @param array $properties the property initial values given in terms of name-value pairs.
      * @return object the object itself
      */
-    public static function configure($object, $properties, $autoCamelCase = false)
+    public static function configure($object, $properties)
     {
         foreach ($properties as $name => $value) {
-            if ($autoCamelCase) {
-                $name = Text::toCamelCase($name);
-            }
             $object->$name = $value;
         }
         return $object;
