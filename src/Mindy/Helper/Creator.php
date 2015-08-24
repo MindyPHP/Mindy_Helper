@@ -142,9 +142,12 @@ class Creator
      * @param array $properties the property initial values given in terms of name-value pairs.
      * @return object the object itself
      */
-    public static function configure($object, $properties)
+    public static function configure($object, $properties, $autoCamelCase = false)
     {
         foreach ($properties as $name => $value) {
+            if ($autoCamelCase) {
+                $name = Text::toCamelCase($name);
+            }
             $object->$name = $value;
         }
         return $object;
