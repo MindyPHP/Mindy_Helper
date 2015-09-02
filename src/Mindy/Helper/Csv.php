@@ -83,15 +83,15 @@ class Csv
             file_put_contents($filePath, '');
         }
 
-        function iterator(array $data)
+        function iterate(array $tmp)
         {
-            foreach ($data as $row) {
+            foreach ($tmp as $row) {
                 yield $row;
             }
         }
 
         $data = array_merge([$header], $data);
-        foreach (iterator($data) as $row) {
+        foreach (iterate($data) as $row) {
             $line = [];
             foreach ($row as $attribute) {
                 $value = iconv($inCharset, 'cp1251', $attribute);
