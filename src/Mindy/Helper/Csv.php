@@ -77,30 +77,39 @@ class Csv
     }
 
 
-    public function createCsv($header, $data, $filePath, $inCharset='UTF-8')
+    public function createCsv($header, $data, $filePath = null, $inCharset = 'UTF-8')
     {
-        if (!file_exists($filePath)) {
-            file_put_contents($filePath, '');
-        }
-
-        function iterate(array $tmp)
+        function iterator(array $data)
         {
-            foreach ($tmp as $row) {
+            foreach ($data as $row) {
                 yield $row;
             }
         }
 
+        if ($filePath !== null) {
+            if (!file_exists($filePath)) {
+                file_put_contents($filePath, '');
+            }
+        }
+
         $data = array_merge([$header], $data);
-        foreach (iterate($data) as $row) {
+
+        $fileContent = '';
+
+        foreach (iterator($data) as $row) {
             $line = [];
             foreach ($row as $attribute) {
                 $value = iconv($inCharset, 'cp1251', $attribute);
                 $line[] = $this->enclose_value($value);
             }
-            $this->putRow($line, $filePath);
+            if ($filePath !== null) {
+                $this->putRow($line, $filePath);
+            } else {
+                $fileContent .= implode($this->delimiter, $line) . $this->lineEnd;
+            }
         }
 
-
+        return ($fileContent) ? $fileContent : $filePath;
     }
 
     protected function putRow(array $row, $filePath)
