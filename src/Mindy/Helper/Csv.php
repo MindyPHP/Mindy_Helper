@@ -50,8 +50,10 @@ class Csv
     {
         $config = new LexerConfig();
         $config->setDelimiter($this->delimiter);
-        $config->setFromCharset($this->fromCharset);
-        $config->setToCharset($this->toCharset);
+        if (strtolower($this->fromCharset) != strtolower($this->toCharset)) {
+            $config->setFromCharset($this->fromCharset);
+            $config->setToCharset($this->toCharset);
+        }
 
         $lexer = new Lexer($config);
         $interpreter = new Interpreter();
@@ -99,9 +101,10 @@ class Csv
         foreach (iterator($data) as $row) {
             $line = [];
             foreach ($row as $attribute) {
-                $value = iconv($inCharset, 'cp1251', $attribute);
+                $value = iconv($inCharset, $this->toCharset, $attribute);
                 $line[] = $this->enclose_value($value);
             }
+
             if ($filePath !== null) {
                 $this->putRow($line, $filePath);
             } else {
@@ -118,6 +121,4 @@ class Csv
         $current .= implode($this->delimiter, $row) . $this->lineEnd;
         file_put_contents($filePath, $current);
     }
-
-
 }

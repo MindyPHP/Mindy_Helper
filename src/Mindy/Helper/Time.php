@@ -13,7 +13,7 @@ namespace Mindy\Helper;
  * @version 1.0
  *
  */
-class TimeHelper
+class Time
 {
     public static function getDays($sStartDate, $sEndDate)
     {
