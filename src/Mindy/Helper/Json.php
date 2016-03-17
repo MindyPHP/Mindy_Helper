@@ -2,8 +2,8 @@
 
 namespace Mindy\Helper;
 
-use Mindy\Core\Interfaces\Arrayable;
 use Mindy\Exception\InvalidParamException;
+use Mindy\Helper\Interfaces\Arrayable;
 
 /**
  * BaseJson provides concrete implementation for [[Json]].
