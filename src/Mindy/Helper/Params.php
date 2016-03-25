@@ -30,7 +30,7 @@ class Params
     }
 
     /**
-     * @param $path
+     * @param $paths
      * @return array
      */
     public static function collect($paths)
