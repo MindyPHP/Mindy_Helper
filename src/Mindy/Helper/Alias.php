@@ -39,14 +39,14 @@ class Alias
      */
     public static function get($alias)
     {
-        if(!is_string($alias)) {
+        if (!is_string($alias)) {
             throw new InvalidArgumentException("Alias must be a string. " . gettype($alias) . " given.");
         }
 
+        $alias = strtolower($alias);
         if (isset(self::$_aliases[$alias])) {
             return self::$_aliases[$alias];
         } elseif (($pos = strpos($alias, '.')) !== false) {
-
             $tmp = explode('.', $alias);
             $parentAlias = str_replace("." . end($tmp), "", $alias);
 
@@ -58,24 +58,21 @@ class Alias
                     return self::$_aliases[$alias] = rtrim(self::$_aliases[$rootAlias] . DIRECTORY_SEPARATOR . str_replace('.', DIRECTORY_SEPARATOR, substr($alias, $pos + 1)), '*' . DIRECTORY_SEPARATOR);
                 }
             }
-//            elseif (self::$_app instanceof CWebApplication) {
-//                if (self::$_app->findModule($rootAlias) !== null)
-//                    return self::getPathOfAlias($alias);
-//            }
         }
         return false;
     }
 
     public static function find($alias)
     {
-        if(!is_string($alias)) {
+        if (!is_string($alias)) {
             throw new InvalidArgumentException("Alias must be a string. " . gettype($alias) . " given.");
         }
+        $alias = strtolower($alias);
         $found = [];
         $parentAlias = str_replace('.*', '', $alias);
-        foreach(self::$_aliases as $aliasPath => $path){
-            if (Text::startsWith($aliasPath, $parentAlias)) {
-                $cleanAlias = substr_replace($aliasPath, '', 0, strlen($parentAlias)+1);
+        foreach (self::$_aliases as $aliasPath => $path) {
+            if ($parentAlias === "" || mb_strpos($aliasPath, $parentAlias, 0, 'UTF-8') === 0) {
+                $cleanAlias = substr_replace($aliasPath, '', 0, strlen($parentAlias) + 1);
                 if (strlen($cleanAlias) > 0 && strpos($cleanAlias, '.') === false) {
                     $found[] = $path;
                 }
@@ -94,9 +91,9 @@ class Alias
     public static function set($alias, $path)
     {
         if (empty($path)) {
-            unset(self::$_aliases[$alias]);
+            unset(self::$_aliases[strtolower($alias)]);
         } else {
-            self::$_aliases[$alias] = rtrim($path, '\\/');
+            self::$_aliases[strtolower($alias)] = rtrim($path, '\\/');
         }
     }
 }
