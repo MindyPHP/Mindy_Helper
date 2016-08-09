@@ -12,6 +12,8 @@
  * @date 12/05/14.05.2014 18:25
  */
 
+declare(strict_types=1);
+
 namespace Mindy\Helper;
 
 use InvalidArgumentException;
@@ -37,7 +39,7 @@ class Alias
      * @throws \InvalidArgumentException
      * @return mixed file path corresponding to the alias, false if the alias is invalid.
      */
-    public static function get($alias)
+    public static function get(string $alias)
     {
         if (!is_string($alias)) {
             throw new InvalidArgumentException("Alias must be a string. " . gettype($alias) . " given.");
@@ -51,7 +53,8 @@ class Alias
             $parentAlias = str_replace("." . end($tmp), "", $alias);
 
             if (isset(self::$_aliases[$parentAlias])) {
-                return self::$_aliases[$alias] = rtrim(self::$_aliases[$parentAlias] . DIRECTORY_SEPARATOR . str_replace('.', DIRECTORY_SEPARATOR, substr($alias, $pos + 1)), '*' . DIRECTORY_SEPARATOR);
+                $path = rtrim(self::$_aliases[$parentAlias] . DIRECTORY_SEPARATOR . str_replace('.', DIRECTORY_SEPARATOR, end($tmp)), '*' . DIRECTORY_SEPARATOR);
+                return self::$_aliases[$alias] = $path;
             } else {
                 $rootAlias = substr($alias, 0, $pos);
                 if (isset(self::$_aliases[$rootAlias])) {
@@ -88,7 +91,7 @@ class Alias
      * @param string $path the path corresponding to the alias. If this is null, the corresponding
      * path alias will be removed.
      */
-    public static function set($alias, $path)
+    public static function set(string $alias, string $path)
     {
         if (empty($path)) {
             unset(self::$_aliases[strtolower($alias)]);
