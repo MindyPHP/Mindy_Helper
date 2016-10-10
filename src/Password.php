@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types = 1);
+
 namespace Mindy\Helper;
 
-use Mindy\Exception\Exception;
-use Mindy\Base\Mindy;
+use Exception;
 
 /**
  * CPasswordHelper provides a simple API for secure password hashing and verification.
@@ -56,15 +57,11 @@ class Password
     protected static function checkBlowfish()
     {
         if (!function_exists('crypt')) {
-            throw new Exception(Mindy::t('base', '{class} requires the PHP crypt() function. This system does not have it.', [
-                '{class}' => __CLASS__
-            ]));
+            throw new Exception(__CLASS__ . ' requires the PHP crypt() function. This system does not have it.');
         }
 
         if (!defined('CRYPT_BLOWFISH') || !CRYPT_BLOWFISH) {
-            throw new Exception(Mindy::t('base', '{class} requires the Blowfish option of the PHP crypt() function. This system does not have it.', [
-                    '{class}' => __CLASS__
-            ]));
+            throw new Exception(__CLASS__ . ' requires the Blowfish option of the PHP crypt() function. This system does not have it.');
         }
     }
 
@@ -87,14 +84,13 @@ class Password
      * @return string The password hash string, ASCII and not longer than 64 characters.
      * @throws Exception on bad password parameter or if crypt() with Blowfish hash is not available.
      */
-    public static function hashPassword($password, $cost = 13)
+    public static function hashPassword(string $password, int $cost = 13) : string
     {
         self::checkBlowfish();
-        $salt = self::generateSalt($cost);
-        $hash = crypt($password, $salt);
+        $hash = crypt($password, self::generateSalt($cost));
 
-        if (!is_string($hash) || (function_exists('mb_strlen') ? mb_strlen($hash, '8bit') : strlen($hash)) < 32) {
-            throw new Exception(Mindy::t('base', 'Internal error while generating hash.'));
+        if (!is_string($hash) || mb_strlen($hash, '8bit') < 32) {
+            throw new Exception('Internal error while generating hash.');
         }
 
         return $hash;
@@ -108,14 +104,14 @@ class Password
      * @return bool True if the password matches the hash.
      * @throws Exception on bad password or hash parameters or if crypt() with Blowfish hash is not available.
      */
-    public static function verifyPassword($password, $hash)
+    public static function verifyPassword(string $password, string $hash) : bool
     {
         self::checkBlowfish();
-        if (!is_string($password) || $password === '') {
+        if ($password === '') {
             return false;
         }
 
-        if (!$password || !preg_match('{^\$2[axy]\$(\d\d)\$[\./0-9A-Za-z]{22}}', $hash, $matches) || $matches[1] < 4 || $matches[1] > 31) {
+        if (!preg_match('{^\$2[axy]\$(\d\d)\$[\./0-9A-Za-z]{22}}', $hash, $matches) || $matches[1] < 4 || $matches[1] > 31) {
             return false;
         }
 
@@ -148,15 +144,10 @@ class Password
      * @return bool true if the strings are the same, false if they are different or if
      * either is not a string.
      */
-    public static function same($a, $b)
+    public static function same(string $a, string $b) : bool
     {
-        if (!is_string($a) || !is_string($b)) {
-            return false;
-        }
-
-        $mb = function_exists('mb_strlen');
-        $length = $mb ? mb_strlen($a, '8bit') : strlen($a);
-        if ($length !== ($mb ? mb_strlen($b, '8bit') : strlen($b))) {
+        $length = mb_strlen($a, '8bit');
+        if ($length !== mb_strlen($b, '8bit')) {
             return false;
         }
 
@@ -182,20 +173,15 @@ class Password
      * @return string the random salt value.
      * @throws Exception in case of invalid cost number
      */
-    public static function generateSalt($cost = 13)
+    public static function generateSalt(int $cost = 13) : string
     {
-        if (!is_numeric($cost)) {
-            throw new Exception(Mindy::t('base', '{class}::$cost must be a number.', array('{class}' => __CLASS__)));
-        }
-
-        $cost = (int)$cost;
         if ($cost < 4 || $cost > 31) {
-            throw new Exception(Mindy::t('base', '{class}::$cost must be between 4 and 31.', array('{class}' => __CLASS__)));
+            throw new Exception(__CLASS__ . '::$cost must be between 4 and 31.');
         }
 
-        if (($random = Mindy::app()->getSecurityManager()->generateRandomString(22, true)) === false) {
-            if (($random = Mindy::app()->getSecurityManager()->generateRandomString(22, false)) === false) {
-                throw new Exception(Mindy::t('base', 'Unable to generate random string.'));
+        if (($random = Security::generateRandomString(22, true)) === false) {
+            if (($random = Security::generateRandomString(22, false)) === false) {
+                throw new Exception('Unable to generate random string.');
             }
         }
         return sprintf('$2a$%02d$', $cost) . strtr($random, array('_' => '.', '~' => '/'));

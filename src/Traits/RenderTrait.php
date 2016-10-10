@@ -2,7 +2,7 @@
 
 namespace Mindy\Helper\Traits;
 
-use Mindy\Base\Mindy;
+use function Mindy\app;
 
 /**
  * Class RenderTrait
@@ -10,36 +10,45 @@ use Mindy\Base\Mindy;
  */
 trait RenderTrait
 {
+    protected static function getTemplate()
+    {
+        return app()->template;
+    }
+
     public function renderString($source, array $data = [])
     {
-        return Mindy::app()->getComponent('template')->renderString($source, $this->mergeData($data));
+        return self::getTemplate()->renderString($source, $this->mergeData($data));
     }
 
     protected static function mergeData($data)
     {
-        if(is_array($data) === false) {
+        if (is_array($data) === false) {
             $data = [];
         }
-        $app = Mindy::app();
+        $app = app();
+        $container = $app->getContainer();
+        $request = $container->get('request_stack')->getCurrentRequest();
+
+        $user = null;
+        if ($container->has('security.token_storage')) {
+            if (null === $token = $container->get('security.token_storage')->getToken()) {
+                $user = null;
+            }
+            if (!is_object($user = $token->getUser())) {
+                // e.g. anonymous authentication
+                $user = null;
+            }
+        }
+
         return array_merge($data, [
-            'request' => $app->getComponent('request'),
-            'user' => $app->getUser()
+            'request' => $request,
+            'user' => $user
         ]);
     }
 
     public static function renderTemplate($view, array $data = [])
     {
-        return Mindy::app()->getComponent('template')->render($view, self::mergeData($data));
-    }
-
-    /**
-     * @deprecated use renderTemplate
-     * @param $view
-     * @param array $data
-     */
-    public static function renderStatic($view, array $data = [])
-    {
-        return self::renderTemplate($view, $data);
+        return self::getTemplate()->render($view, self::mergeData($data));
     }
 
     /**

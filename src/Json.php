@@ -2,8 +2,7 @@
 
 namespace Mindy\Helper;
 
-use Mindy\Exception\InvalidParamException;
-use Mindy\Helper\Interfaces\Arrayable;
+use Exception;
 
 /**
  * BaseJson provides concrete implementation for [[Json]].
@@ -40,29 +39,29 @@ class Json
      * @param string $json the JSON string to be decoded
      * @param boolean $asArray whether to return objects in terms of associative arrays.
      * @return mixed the PHP data
-     * @throws InvalidParamException if there is any decoding error
+     * @throws Exception if there is any decoding error
      */
     public static function decode($json, $asArray = true)
     {
         if (!is_string($json)) {
-            throw new InvalidParamException('Invalid JSON data.');
+            throw new Exception('Invalid JSON data.');
         }
         $decode = json_decode((string) $json, $asArray);
         switch (json_last_error()) {
             case JSON_ERROR_NONE:
                 break;
             case JSON_ERROR_DEPTH:
-                throw new InvalidParamException('The maximum stack depth has been exceeded.');
+                throw new Exception('The maximum stack depth has been exceeded.');
             case JSON_ERROR_CTRL_CHAR:
-                throw new InvalidParamException('Control character error, possibly incorrectly encoded.');
+                throw new Exception('Control character error, possibly incorrectly encoded.');
             case JSON_ERROR_SYNTAX:
-                throw new InvalidParamException('Syntax error.');
+                throw new Exception('Syntax error.');
             case JSON_ERROR_STATE_MISMATCH:
-                throw new InvalidParamException('Invalid or malformed JSON.');
+                throw new Exception('Invalid or malformed JSON.');
             case JSON_ERROR_UTF8:
-                throw new InvalidParamException('Malformed UTF-8 characters, possibly incorrectly encoded.');
+                throw new Exception('Malformed UTF-8 characters, possibly incorrectly encoded.');
             default:
-                throw new InvalidParamException('Unknown JSON decoding error.');
+                throw new Exception('Unknown JSON decoding error.');
         }
 
         return $decode;
@@ -80,7 +79,7 @@ class Json
         if (is_object($data)) {
             if ($data instanceof \JsonSerializable) {
                 $data = $data->jsonSerialize();
-            } elseif ($data instanceof Arrayable) {
+            } elseif (method_exists($data, 'toArray')) {
                 $data = $data->toArray();
             } else {
                 $result = [];
