@@ -17,38 +17,12 @@ trait RenderTrait
 
     public function renderString($source, array $data = [])
     {
-        return self::getTemplate()->renderString($source, $this->mergeData($data));
-    }
-
-    protected static function mergeData($data)
-    {
-        if (is_array($data) === false) {
-            $data = [];
-        }
-        $app = app();
-        $container = $app->getContainer();
-        $request = $container->get('request_stack')->getCurrentRequest();
-
-        $user = null;
-        if ($container->has('security.token_storage')) {
-            if (null === $token = $container->get('security.token_storage')->getToken()) {
-                $user = null;
-            }
-            if (!is_object($user = $token->getUser())) {
-                // e.g. anonymous authentication
-                $user = null;
-            }
-        }
-
-        return array_merge($data, [
-            'request' => $request,
-            'user' => $user
-        ]);
+        return self::getTemplate()->renderString($source, $data);
     }
 
     public static function renderTemplate($view, array $data = [])
     {
-        return self::getTemplate()->render($view, self::mergeData($data));
+        return self::getTemplate()->render($view, $data);
     }
 
     /**
