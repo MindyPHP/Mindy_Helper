@@ -1,7 +1,5 @@
 .idea
 *.iml
-
-build
 composer.lock
 vendor
 .DS_Store

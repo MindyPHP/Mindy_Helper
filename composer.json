@@ -1,21 +1,17 @@
 {
   "name": "mindy/helper",
   "homepage": "https://github.com/MindyPHP/Mindy_Helper",
-  "license": "BSD",
+  "license": "MIT",
   "autoload": {
+    "files": [
+      "src/functions.php"
+    ],
     "psr-4": {
       "Mindy\\Helper\\": "src/"
     }
   },
-  "autoload-dev": {
-    "psr-4": {
-      "Mindy\\Helper\\Tests\\": "test/"
-    }
-  },
   "require": {
-    "php": ">=5.6",
-    "goodby/csv": "*",
-    "mindy/exception": "*"
+    "php": ">=7.0"
   },
   "require-dev": {
     "phpunit/phpunit": "*",

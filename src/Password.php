@@ -7,46 +7,8 @@ namespace Mindy\Helper;
 use Exception;
 
 /**
- * CPasswordHelper provides a simple API for secure password hashing and verification.
- *
- * CPasswordHelper uses the Blowfish hash algorithm available in many PHP runtime
- * environments through the PHP {@link http://php.net/manual/en/function.crypt.php crypt()}
- * built-in function. As of Dec 2012 it is the strongest algorithm available in PHP
- * and the only algorithm without some security concerns surrounding it. For this reason,
- * CPasswordHelper fails to initialize when run in and environment that does not have
- * crypt() and its Blowfish option. Systems with the option include:
- * (1) Most *nix systems since PHP 4 (the algorithm is part of the library function crypt(3));
- * (2) All PHP systems since 5.3.0; (3) All PHP systems with the
- * {@link http://www.hardened-php.net/suhosin/ Suhosin patch}.
- * For more information about password hashing, crypt() and Blowfish, please read
- * the Yii Wiki article
- * {@link http://www.yiiframework.com/wiki/425/use-crypt-for-password-storage/ Use crypt() for password storage}.
- * and the
- * PHP RFC {@link http://wiki.php.net/rfc/password_hash Adding simple password hashing API}.
- *
- * CPasswordHelper throws an exception if the Blowfish hash algorithm is not
- * available in the runtime PHP's crypt() function. It can be used as follows
- *
- * Generate a hash from a password:
- * <pre>
- * $hash = CPasswordHelper::hashPassword($password);
- * </pre>
- * This hash can be stored in a database (e.g. CHAR(64) CHARACTER SET latin1). The
- * hash is usually generated and saved to the database when the user enters a new password.
- * But it can also be useful to generate and save a hash after validating a user's
- * password in order to change the cost or refresh the salt.
- *
- * To verify a password, fetch the user's saved hash from the database (into $hash) and:
- * <pre>
- * if (CPasswordHelper::verifyPassword($password, $hash))
- *     // password is good
- * else
- *     // password is bad
- * </pre>
- *
- * @author Tom Worster <fsb@thefsb.org>
+ * Class Password
  * @package Mindy\Helper
- * @since 1.1.14
  */
 class Password
 {
@@ -120,43 +82,7 @@ class Password
             return false;
         }
 
-        return self::same($test, $hash);
-    }
-
-    /**
-     * Check for sameness of two strings using an algorithm with timing
-     * independent of the string values if the subject strings are of equal length.
-     *
-     * The function can be useful to prevent timing attacks. For example, if $a and $b
-     * are both hash values from the same algorithm, then the timing of this function
-     * does not reveal whether or not there is a match.
-     *
-     * NOTE: timing is affected if $a and $b are different lengths or either is not a
-     * string. For the purpose of checking password hash this does not reveal information
-     * useful to an attacker.
-     *
-     * @see http://blog.astrumfutura.com/2010/10/nanosecond-scale-remote-timing-attacks-on-php-applications-time-to-take-them-seriously/
-     * @see http://codereview.stackexchange.com/questions/13512
-     * @see https://github.com/ircmaxell/password_compat/blob/master/lib/password.php
-     *
-     * @param string $a First subject string to compare.
-     * @param string $b Second subject string to compare.
-     * @return bool true if the strings are the same, false if they are different or if
-     * either is not a string.
-     */
-    public static function same(string $a, string $b) : bool
-    {
-        $length = mb_strlen($a, '8bit');
-        if ($length !== mb_strlen($b, '8bit')) {
-            return false;
-        }
-
-        $check = 0;
-        for ($i = 0; $i < $length; $i += 1) {
-            $check |= (ord($a[$i]) ^ ord($b[$i]));
-        }
-
-        return $check === 0;
+        return password_verify($test, $hash);
     }
 
     /**
@@ -179,11 +105,6 @@ class Password
             throw new Exception(__CLASS__ . '::$cost must be between 4 and 31.');
         }
 
-        if (($random = Security::generateRandomString(22, true)) === false) {
-            if (($random = Security::generateRandomString(22, false)) === false) {
-                throw new Exception('Unable to generate random string.');
-            }
-        }
-        return sprintf('$2a$%02d$', $cost) . strtr($random, array('_' => '.', '~' => '/'));
+        return sprintf('$2a$%02d$', $cost) . strtr(random_bytes($cost), ['_' => '.', '~' => '/']);
     }
 }
